@@ -1,0 +1,1854 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ prop.name }} | Property Review | Rental Finder
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   ADMIN PROPERTY REVIEW
+========================================================= */
+
+.admin-review-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 24px 70px;
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+.review-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 18px;
+
+    color: #7657e8;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition: .2s ease;
+}
+
+.review-back:hover {
+    color: #5738b5;
+    transform: translateX(-2px);
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.review-card {
+    overflow: hidden;
+
+    background: #fff;
+
+    border: 1px solid #e5e0ea;
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 40px rgba(45, 30, 60, .06);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.review-header {
+    padding: 30px 32px 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf8ff 0%,
+            #ffffff 72%
+        );
+
+    border-bottom: 1px solid #eee9f2;
+}
+
+.review-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 22px;
+}
+
+.review-kicker {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #7657e8;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+}
+
+.review-header h1 {
+    margin: 0;
+
+    color: #2f2439;
+
+    font-size: 31px;
+    line-height: 1.2;
+
+    font-weight: 800;
+}
+
+.review-header-location {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+
+    margin: 10px 0 0;
+
+    color: #777;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.review-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    padding: 10px 14px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.review-status.pending {
+    background: #fff4dc;
+    color: #a36b13;
+}
+
+.review-status.approved {
+    background: #e8f7ee;
+    color: #287448;
+}
+
+.review-status.rejected {
+    background: #fdecee;
+    color: #a84753;
+}
+
+
+/* =========================================================
+   HEADER META
+========================================================= */
+
+.review-meta {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin-top: 20px;
+}
+
+.review-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 11px;
+
+    border: 1px solid #e9e3ed;
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #777;
+
+    font-size: 10px;
+}
+
+.review-meta-item strong {
+    color: #4c3e55;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.review-content {
+    padding: 30px 32px 34px;
+}
+
+
+/* =========================================================
+   PHOTO GALLERY
+========================================================= */
+
+.review-gallery {
+    display: grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap: 6px;
+
+    height: 390px;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: #f5f1fa;
+}
+
+.review-gallery-main {
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+.review-gallery-main img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform .35s ease;
+}
+
+.review-gallery-main:hover img {
+    transform: scale(1.015);
+}
+
+.review-gallery-side {
+    display: grid;
+
+    grid-template-rows: 1fr 1fr;
+
+    gap: 6px;
+
+    min-width: 0;
+}
+
+.review-gallery-side-item {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff2f7,
+            #f1edff
+        );
+}
+
+.review-gallery-side-item img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform .3s ease;
+}
+
+.review-gallery-side-item:hover img {
+    transform: scale(1.03);
+}
+
+
+/* photo count */
+
+.photo-count {
+    position: absolute;
+
+    right: 15px;
+    bottom: 15px;
+
+    padding: 7px 10px;
+
+    border-radius: 8px;
+
+    background: rgba(25, 18, 30, .72);
+
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    backdrop-filter: blur(5px);
+}
+
+
+/* no photos */
+
+.review-no-photo {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 390px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff3f7,
+            #f3efff
+        );
+
+    color: #7657e8;
+
+    font-size: 70px;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.review-section {
+    margin-top: 29px;
+}
+
+.review-section-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+.review-section-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #f0ebff;
+
+    font-size: 15px;
+}
+
+.review-section-header h2 {
+    margin: 0;
+
+    color: #3b2e45;
+
+    font-size: 17px;
+
+    font-weight: 800;
+}
+
+.review-section-header p {
+    margin: 2px 0 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   PROPERTY SUMMARY
+========================================================= */
+
+.property-summary {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 10px;
+}
+
+.summary-box {
+    padding: 15px;
+
+    border: 1px solid #e9e3ec;
+
+    border-radius: 11px;
+
+    background: #fcfbfd;
+}
+
+.summary-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #999;
+
+    font-size: 9px;
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+.summary-value {
+    display: block;
+
+    color: #45374d;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+    line-height: 1.4;
+}
+
+.summary-value.price {
+    color: #7657e8;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   DETAILS GRID
+========================================================= */
+
+.details-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+}
+
+.detail-box {
+    padding: 16px;
+
+    border: 1px solid #e9e3ec;
+
+    border-radius: 11px;
+
+    background: #fff;
+}
+
+.detail-box.full {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+.detail-value {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 12px;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   AMENITIES
+========================================================= */
+
+.amenities {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+.amenity {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 11px;
+
+    border: 1px solid #e5ddec;
+
+    border-radius: 8px;
+
+    background: #faf7ff;
+
+    color: #654d78;
+
+    font-size: 11px;
+
+    font-weight: 650;
+}
+
+.amenity::before {
+    content: "✓";
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+
+    background: #e9e0ff;
+
+    color: #7657e8;
+
+    font-size: 8px;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-box {
+    padding: 17px;
+
+    border: 1px solid #e8e2eb;
+
+    border-radius: 11px;
+
+    background: #fbfafc;
+
+    color: #666;
+
+    font-size: 12px;
+
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   OWNER CARD
+========================================================= */
+
+.owner-card {
+    display: grid;
+
+    grid-template-columns: auto 1fr auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    border: 1px solid #e6e0e9;
+
+    border-radius: 14px;
+
+    background: #fff;
+}
+
+.owner-avatar {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eee7ff,
+            #f7eafa
+        );
+
+    color: #7657e8;
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.owner-name {
+    margin: 0 0 4px;
+
+    color: #35283f;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+.owner-role {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+.owner-contact {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.owner-contact-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   ADMIN NOTE
+========================================================= */
+
+.existing-note {
+    padding: 14px;
+
+    margin-bottom: 15px;
+
+    border: 1px solid #eadfca;
+
+    border-radius: 10px;
+
+    background: #fffaf0;
+}
+
+.existing-note-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #a06d18;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .6px;
+}
+
+.existing-note p {
+    margin: 0;
+
+    color: #806c43;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   DECISION PANEL
+========================================================= */
+
+.decision-panel {
+    padding: 21px;
+
+    border: 1px solid #e5ddec;
+
+    border-radius: 15px;
+
+    background: #faf8fd;
+}
+
+.decision-panel-header {
+    margin-bottom: 17px;
+}
+
+.decision-panel-header h2 {
+    margin: 0 0 4px;
+
+    color: #3b2e45;
+
+    font-size: 16px;
+}
+
+.decision-panel-header p {
+    margin: 0;
+
+    color: #888;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* note textarea */
+
+.decision-panel textarea {
+    width: 100%;
+
+    min-height: 95px;
+
+    box-sizing: border-box;
+
+    padding: 12px 13px;
+
+    border: 1px solid #ddd7e5;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #444;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    resize: vertical;
+
+    transition: .2s ease;
+}
+
+.decision-panel textarea:focus {
+    border-color: #7657e8;
+
+    box-shadow:
+        0 0 0 3px rgba(118, 87, 232, .09);
+}
+
+.decision-panel textarea::placeholder {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   DECISION BUTTONS
+========================================================= */
+
+.decision-buttons {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 13px;
+}
+
+.decision-button {
+    min-height: 48px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.approve-button {
+    background: #328052;
+
+    color: #fff;
+}
+
+.approve-button:hover {
+    background: #276b43;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(50, 128, 82, .18);
+}
+
+.reject-button {
+    background: #fff;
+
+    border: 1px solid #e1bdc3;
+
+    color: #ae4854;
+}
+
+.reject-button:hover {
+    background: #fff1f3;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CURRENT STATUS
+========================================================= */
+
+.final-status {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 18px;
+
+    border-radius: 13px;
+}
+
+.final-status.approved {
+    border: 1px solid #cfe5d7;
+
+    background: #f2fbf5;
+}
+
+.final-status.rejected {
+    border: 1px solid #ecd5da;
+
+    background: #fff5f6;
+}
+
+.final-status-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 39px;
+    height: 39px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    font-size: 17px;
+}
+
+.final-status.approved .final-status-icon {
+    background: #ddf2e5;
+
+    color: #287448;
+}
+
+.final-status.rejected .final-status-icon {
+    background: #f8e0e3;
+
+    color: #a84753;
+}
+
+.final-status h3 {
+    margin: 0 0 4px;
+
+    font-size: 14px;
+}
+
+.final-status.approved h3 {
+    color: #286c44;
+}
+
+.final-status.rejected h3 {
+    color: #a1434e;
+}
+
+.final-status p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.review-divider {
+    height: 1px;
+
+    margin: 29px 0;
+
+    background: #eee9ef;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .property-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .owner-card {
+        grid-template-columns: auto 1fr;
+    }
+
+    .owner-contact {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .admin-review-page {
+        padding: 22px 15px 45px;
+    }
+
+    .review-header {
+        padding: 23px 20px;
+    }
+
+    .review-header-top {
+        flex-direction: column;
+    }
+
+    .review-header h1 {
+        font-size: 26px;
+    }
+
+    .review-content {
+        padding: 22px 20px 27px;
+    }
+
+    .review-gallery {
+        grid-template-columns: 1fr;
+
+        height: 300px;
+    }
+
+    .review-gallery-side {
+        display: none;
+    }
+
+    .review-no-photo {
+        height: 300px;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-box.full {
+        grid-column: auto;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .property-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .decision-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .owner-card {
+        grid-template-columns: 1fr;
+
+        text-align: center;
+    }
+
+    .owner-avatar {
+        margin: 0 auto;
+    }
+
+    .owner-contact {
+        align-items: center;
+
+        grid-column: auto;
+    }
+
+}
+
+</style>
+
+
+<main class="admin-review-page">
+
+
+    <!-- =====================================================
+         BACK
+    ====================================================== -->
+
+    <a
+        class="review-back"
+        href="{{ url_for('admin_properties') }}"
+    >
+        ← Back to Properties
+    </a>
+
+
+    <!-- =====================================================
+         MAIN CARD
+    ====================================================== -->
+
+    <section class="review-card">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="review-header">
+
+            <div class="review-header-top">
+
+                <div>
+
+                    <span class="review-kicker">
+                        ADMIN PROPERTY REVIEW
+                    </span>
+
+                    <h1>
+                        {{ prop.name }}
+                    </h1>
+
+                    <p class="review-header-location">
+                        📍
+                        {{ prop.address }}
+                    </p>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                {% if prop.status == 'approved' %}
+
+                    <span class="review-status approved">
+                        ✓ Approved
+                    </span>
+
+                {% elif prop.status == 'rejected' %}
+
+                    <span class="review-status rejected">
+                        ✕ Rejected
+                    </span>
+
+                {% else %}
+
+                    <span class="review-status pending">
+                        ⏳ Pending Review
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- META -->
+
+            <div class="review-meta">
+
+                <div class="review-meta-item">
+                    🏷️ Property #{{ prop.id }}
+                </div>
+
+                <div class="review-meta-item">
+                    🏠 {{ prop.room_type }}
+                </div>
+
+                <div class="review-meta-item">
+
+                    🕐 Added
+
+                    <strong>
+                        {{ prop.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <div class="review-content">
+
+
+            <!-- =================================================
+                 PHOTO GALLERY
+            ================================================== -->
+
+            {% if prop.photos %}
+
+            <section>
+
+                <div class="review-gallery">
+
+
+                    <!-- MAIN IMAGE -->
+
+                    <div class="review-gallery-main">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='uploads/' + prop.photos[0].filename
+                            ) }}"
+                            alt="{{ prop.name }}"
+                        >
+
+                    </div>
+
+
+                    <!-- SIDE IMAGES -->
+
+                    {% if prop.photos|length > 1 %}
+
+                    <div class="review-gallery-side">
+
+                        {% for photo in prop.photos[1:3] %}
+
+                        <div class="review-gallery-side-item">
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/' + photo.filename
+                                ) }}"
+                                alt="{{ prop.name }}"
+                            >
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <span class="photo-count">
+
+                        📷
+                        {{ prop.photos|length }}
+                        photo{% if prop.photos|length != 1 %}s{% endif %}
+
+                    </span>
+
+                </div>
+
+            </section>
+
+            {% else %}
+
+            <div class="review-no-photo">
+                🏠
+            </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 PROPERTY OVERVIEW
+            ================================================== -->
+
+            <section class="review-section">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        📋
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Property Overview
+                        </h2>
+
+                        <p>
+                            Key information for this listing
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="property-summary">
+
+
+                    <!-- RENT -->
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Rent
+                        </span>
+
+                        <span class="summary-value price">
+
+                            ₹{{ '%.0f'|format(prop.rent) }}
+
+                            <small style="color:#888;font-size:10px;font-weight:500;">
+                                / {{ prop.frequency|lower }}
+                            </small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- DEPOSIT -->
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Security Deposit
+                        </span>
+
+                        <span class="summary-value">
+                            ₹{{ '%.0f'|format(prop.deposit or 0) }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- ROOM -->
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Room Type
+                        </span>
+
+                        <span class="summary-value">
+                            {{ prop.room_type }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- AVAILABLE -->
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Available From
+                        </span>
+
+                        <span class="summary-value">
+
+                            {% if prop.available_from %}
+
+                                {{ prop.available_from.strftime('%d %b %Y') }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <div class="review-divider"></div>
+
+
+            <!-- =================================================
+                 LOCATION DETAILS
+            ================================================== -->
+
+            <section class="review-section" style="margin-top:0;">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        📍
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Location Details
+                        </h2>
+
+                        <p>
+                            Property location and nearby information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="details-grid">
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            City
+                        </span>
+
+                        <p class="detail-value">
+                            {{ prop.city }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Area / Locality
+                        </span>
+
+                        <p class="detail-value">
+                            {{ prop.locality }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Nearby College / Landmark
+                        </span>
+
+                        <p class="detail-value">
+                            {{ prop.landmark or 'Not provided' }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Distance from College
+                        </span>
+
+                        <p class="detail-value">
+
+                            {% if prop.distance_college %}
+
+                                {{ prop.distance_college }} km
+
+                            {% else %}
+
+                                Not provided
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="detail-box full">
+
+                        <span class="detail-label">
+                            Full Address
+                        </span>
+
+                        <p class="detail-value">
+                            {{ prop.address }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <div class="review-divider"></div>
+
+
+            <!-- =================================================
+                 AMENITIES
+            ================================================== -->
+
+            <section class="review-section" style="margin-top:0;">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        ✨
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Amenities & Facilities
+                        </h2>
+
+                        <p>
+                            Facilities included with this rental
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="amenities">
+
+                    {% for amenity in prop.amenities.split(',') if amenity.strip() %}
+
+                        <span class="amenity">
+                            {{ amenity.strip() }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="amenity">
+                            No amenities specified
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DESCRIPTION
+            ================================================== -->
+
+            <section class="review-section">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        📝
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Property Description
+                        </h2>
+
+                        <p>
+                            Information submitted by the owner
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="description-box">
+
+                    {{ prop.description or
+                       'No additional description has been provided.'
+                    }}
+
+                </div>
+
+            </section>
+
+
+            <div class="review-divider"></div>
+
+
+            <!-- =================================================
+                 OWNER
+            ================================================== -->
+
+            <section class="review-section" style="margin-top:0;">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Property Owner
+                        </h2>
+
+                        <p>
+                            Owner account associated with this listing
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="owner-card">
+
+
+                    <div class="owner-avatar">
+
+                        {{ prop.owner.name[:1]|upper }}
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="owner-name">
+                            {{ prop.owner.name }}
+                        </p>
+
+                        <p class="owner-role">
+                            Registered Property Owner
+                        </p>
+
+                    </div>
+
+
+                    <div class="owner-contact">
+
+                        <div class="owner-contact-row">
+                            ✉️
+                            {{ prop.owner.email }}
+                        </div>
+
+
+                        {% if prop.owner.phone %}
+
+                        <div class="owner-contact-row">
+                            📞
+                            {{ prop.owner.phone }}
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ADMIN DECISION
+            ================================================== -->
+
+            <section class="review-section">
+
+                <div class="review-section-header">
+
+                    <div class="review-section-icon">
+                        ⚡
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Admin Decision
+                        </h2>
+
+                        <p>
+                            Review this listing before publishing it
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if prop.status == 'pending' %}
+
+
+                    <!-- EXISTING NOTE -->
+
+                    {% if prop.admin_reason %}
+
+                    <div class="existing-note">
+
+                        <span class="existing-note-label">
+                            Previous admin note
+                        </span>
+
+                        <p>
+                            {{ prop.admin_reason }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- DECISION -->
+
+                    <div class="decision-panel">
+
+                        <div class="decision-panel-header">
+
+                            <h2>
+                                Approve or reject this property
+                            </h2>
+
+                            <p>
+                                Add a note to explain your decision.
+                                The owner will receive the decision by email.
+                            </p>
+
+                        </div>
+
+
+                        <textarea
+                            id="admin-reason"
+                            name="admin_reason"
+                            placeholder="Optional note for the owner. For example: Please add clearer room photos, update the address, or provide more accurate details."
+                        ></textarea>
+
+
+                        <div class="decision-buttons">
+
+
+                            <!-- APPROVE -->
+
+                            <form
+                                method="post"
+                                action="{{ url_for(
+                                    'admin_property_decision',
+                                    property_id=prop.id,
+                                    decision='approved'
+                                ) }}"
+                                onsubmit="return confirm('Approve this property and make it visible to students?');"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="reason"
+                                    value=""
+                                    class="decision-reason-input"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="decision-button approve-button"
+                                    onclick="syncReason(this)"
+                                >
+                                    ✓ Approve Property
+                                </button>
+
+                            </form>
+
+
+                            <!-- REJECT -->
+
+                            <form
+                                method="post"
+                                action="{{ url_for(
+                                    'admin_property_decision',
+                                    property_id=prop.id,
+                                    decision='rejected'
+                                ) }}"
+                                onsubmit="return confirm('Reject this property and send the note to the owner?');"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="reason"
+                                    value=""
+                                    class="decision-reason-input"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="decision-button reject-button"
+                                    onclick="syncReason(this)"
+                                >
+                                    ✕ Reject Property
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+                    </div>
+
+
+                {% elif prop.status == 'approved' %}
+
+
+                    <div class="final-status approved">
+
+                        <div class="final-status-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Property approved
+                            </h3>
+
+                            <p>
+                                This property is approved and is currently
+                                eligible to appear in student property listings.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                {% elif prop.status == 'rejected' %}
+
+
+                    <div class="final-status rejected">
+
+                        <div class="final-status-icon">
+                            ✕
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Property rejected
+                            </h3>
+
+                            <p>
+                                This property is currently not approved.
+                            </p>
+
+                            {% if prop.admin_reason %}
+
+                            <p style="margin-top:7px;">
+                                <strong>
+                                    Admin note:
+                                </strong>
+
+                                {{ prop.admin_reason }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function syncReason(button) {
+
+    const textarea =
+        document.getElementById(
+            "admin-reason"
+        );
+
+    const form =
+        button.closest("form");
+
+    const hidden =
+        form.querySelector(
+            ".decision-reason-input"
+        );
+
+    if (
+        textarea
+        &&
+        hidden
+    ) {
+
+        hidden.value =
+            textarea.value.trim();
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,1995 @@
+{% extends "base.html" %}
+
+{% block title %}
+Request Details | Rental Finder
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   REQUEST DETAIL PAGE
+========================================================= */
+
+.request-detail-page {
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    padding: 28px 22px 70px;
+}
+
+
+/* =========================================================
+   BACK LINK
+========================================================= */
+
+.request-back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 18px;
+
+    color: #7657e8;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+}
+
+
+.request-back:hover {
+    color: #5738b5;
+
+    transform: translateX(-2px);
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.request-main-card {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e0ea;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 10px 35px rgba(50, 30, 65, .06);
+}
+
+
+/* =========================================================
+   REQUEST HEADER
+========================================================= */
+
+.request-header {
+    padding: 27px 30px;
+
+    border-bottom: 1px solid #eee9f1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf8ff 0%,
+            #ffffff 100%
+        );
+}
+
+
+.request-header-top {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.request-kicker {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #7657e8;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+}
+
+
+.request-header h1 {
+    margin: 0;
+
+    color: #30243a;
+
+    font-size: 27px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+}
+
+
+.request-date {
+    margin: 8px 0 0;
+
+    color: #888;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+.request-status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.request-status-badge.pending {
+    background: #fff5dc;
+
+    color: #a86d12;
+}
+
+
+.request-status-badge.accepted {
+    background: #e8f7ee;
+
+    color: #267447;
+}
+
+
+.request-status-badge.rejected {
+    background: #fdecee;
+
+    color: #ad4653;
+}
+
+
+/* =========================================================
+   STATUS TRACKER
+========================================================= */
+
+.status-tracker {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 0;
+
+    margin-top: 25px;
+
+    padding: 18px;
+
+    border: 1px solid #ece7ef;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+}
+
+
+.status-step {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+
+.status-step:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 17px;
+
+    left: 38px;
+
+    right: 0;
+
+    height: 2px;
+
+    background: #e8e3ec;
+}
+
+
+.status-step.completed:not(:last-child)::after {
+    background: #bcaeea;
+}
+
+
+.status-step-circle {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #f0edf4;
+
+    color: #999;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.status-step.completed .status-step-circle {
+    background: #7657e8;
+
+    color: #ffffff;
+}
+
+
+.status-step.active .status-step-circle {
+    background: #e9e1ff;
+
+    color: #7657e8;
+
+    box-shadow:
+        0 0 0 4px #f5f1ff;
+}
+
+
+.status-step.rejected .status-step-circle {
+    background: #d95361;
+
+    color: #ffffff;
+}
+
+
+.status-step-text {
+    position: relative;
+
+    z-index: 2;
+
+    background: #ffffff;
+}
+
+
+.status-step-title {
+    display: block;
+
+    color: #444;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+
+.status-step-subtitle {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #999;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.request-content {
+    padding: 28px 30px 32px;
+}
+
+
+/* =========================================================
+   PROPERTY HERO
+========================================================= */
+
+.property-preview {
+    display: grid;
+
+    grid-template-columns: 310px 1fr;
+
+    gap: 24px;
+
+    padding: 18px;
+
+    border: 1px solid #e8e2e9;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   PROPERTY IMAGE
+========================================================= */
+
+.property-preview-image {
+    width: 100%;
+
+    height: 210px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff1f6,
+            #f4efff
+        );
+}
+
+
+.property-preview-image img {
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.property-placeholder {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 100%;
+
+    font-size: 55px;
+}
+
+
+/* =========================================================
+   PROPERTY INFORMATION
+========================================================= */
+
+.property-preview-content {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+.property-approved {
+    display: inline-flex;
+
+    width: fit-content;
+
+    margin-bottom: 8px;
+
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    background: #edf8f1;
+
+    color: #328052;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+
+.property-preview-content h2 {
+    margin: 0 0 7px;
+
+    color: #30243a;
+
+    font-size: 23px;
+
+    line-height: 1.25;
+}
+
+
+.property-location {
+    margin: 0 0 16px;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.property-price {
+    color: #7657e8;
+
+    font-size: 22px;
+
+    font-weight: 850;
+}
+
+
+.property-price small {
+    color: #888;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   PROPERTY QUICK FACTS
+========================================================= */
+
+.property-facts {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 10px;
+
+    margin-top: 14px;
+}
+
+
+.property-fact {
+    padding: 13px;
+
+    border: 1px solid #ece7ef;
+
+    border-radius: 10px;
+
+    background: #faf9fb;
+}
+
+
+.property-fact-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .4px;
+}
+
+
+.property-fact-value {
+    display: block;
+
+    color: #4b3e50;
+
+    font-size: 12px;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.request-section {
+    margin-top: 28px;
+}
+
+
+.request-section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 13px;
+}
+
+
+.request-section-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 31px;
+
+    height: 31px;
+
+    border-radius: 8px;
+
+    background: #f0ebff;
+
+    font-size: 14px;
+}
+
+
+.request-section-title h2 {
+    margin: 0;
+
+    color: #3d3047;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   AMENITIES
+========================================================= */
+
+.amenities {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.amenity {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 8px 11px;
+
+    border: 1px solid #e8deed;
+
+    border-radius: 8px;
+
+    background: #faf7ff;
+
+    color: #654e78;
+
+    font-size: 11px;
+
+    font-weight: 650;
+}
+
+
+.amenity::before {
+    content: "✓";
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 16px;
+
+    height: 16px;
+
+    border-radius: 50%;
+
+    background: #e9e0ff;
+
+    color: #7657e8;
+
+    font-size: 8px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-box {
+    padding: 17px;
+
+    border: 1px solid #e9e3eb;
+
+    border-radius: 12px;
+
+    background: #fbfafc;
+
+    color: #6f6a72;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   REQUEST MESSAGE
+========================================================= */
+
+.request-message {
+    padding: 17px;
+
+    border: 1px solid #e9e3eb;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+
+.request-message-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .6px;
+
+    text-transform: uppercase;
+}
+
+
+.request-message p {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 12px;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+.status-message {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 28px;
+
+    padding: 17px;
+
+    border-radius: 13px;
+}
+
+
+.status-message.pending {
+    border: 1px solid #efdfbd;
+
+    background: #fffaf0;
+}
+
+
+.status-message.accepted {
+    border: 1px solid #cfe7d8;
+
+    background: #f2fbf5;
+}
+
+
+.status-message.rejected {
+    border: 1px solid #efd5d9;
+
+    background: #fff5f6;
+}
+
+
+.status-message-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    font-size: 18px;
+}
+
+
+.status-message.pending .status-message-icon {
+    background: #fff0cf;
+
+    color: #a86d12;
+}
+
+
+.status-message.accepted .status-message-icon {
+    background: #dff3e6;
+
+    color: #287749;
+}
+
+
+.status-message.rejected .status-message-icon {
+    background: #fbe1e4;
+
+    color: #ae4855;
+}
+
+
+.status-message h3 {
+    margin: 0 0 4px;
+
+    font-size: 14px;
+}
+
+
+.status-message.pending h3 {
+    color: #98640f;
+}
+
+
+.status-message.accepted h3 {
+    color: #287046;
+}
+
+
+.status-message.rejected h3 {
+    color: #a34450;
+}
+
+
+.status-message p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   OWNER CONTACT
+========================================================= */
+
+.owner-contact {
+    margin-top: 28px;
+
+    overflow: hidden;
+
+    border: 1px solid #cfe5d7;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+}
+
+
+.owner-contact-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 17px 19px;
+
+    background: #f1faf4;
+
+    border-bottom: 1px solid #dceee2;
+}
+
+
+.owner-contact-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 11px;
+
+    background: #dff2e6;
+
+    font-size: 18px;
+}
+
+
+.owner-contact-header h2 {
+    margin: 0;
+
+    color: #2f6642;
+
+    font-size: 15px;
+}
+
+
+.owner-contact-header p {
+    margin: 3px 0 0;
+
+    color: #779381;
+
+    font-size: 10px;
+}
+
+
+.owner-contact-body {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+
+    padding: 20px;
+}
+
+
+/* =========================================================
+   OWNER PROFILE
+========================================================= */
+
+.owner-profile {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+
+.owner-avatar {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 50px;
+
+    height: 50px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #f1e6ff;
+
+    color: #7657e8;
+
+    font-size: 19px;
+
+    font-weight: 800;
+}
+
+
+.owner-name {
+    margin: 0 0 3px;
+
+    color: #3d3047;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+
+.owner-role {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+.owner-contact-details {
+    display: grid;
+
+    gap: 9px;
+}
+
+
+.owner-contact-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 10px 11px;
+
+    border: 1px solid #ece7eb;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+}
+
+
+.owner-contact-row-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 28px;
+
+    height: 28px;
+
+    border-radius: 7px;
+
+    background: #f8f1fb;
+
+    font-size: 12px;
+}
+
+
+.owner-contact-row span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #aaa;
+
+    font-size: 9px;
+}
+
+
+.owner-contact-row strong {
+    display: block;
+
+    color: #555;
+
+    font-size: 11px;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   ACCEPTED PROPERTY DETAILS
+========================================================= */
+
+.accepted-property {
+    padding: 17px;
+
+    border: 1px solid #e7e1e8;
+
+    border-radius: 12px;
+
+    background: #fcfbfd;
+}
+
+
+.accepted-property h3 {
+    margin: 0 0 11px;
+
+    color: #493b52;
+
+    font-size: 13px;
+}
+
+
+.accepted-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid #eee9ed;
+
+    font-size: 11px;
+}
+
+
+.accepted-row:last-child {
+    border-bottom: 0;
+}
+
+
+.accepted-row span {
+    color: #999;
+}
+
+
+.accepted-row strong {
+    color: #555;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   VIEW PROPERTY BUTTON
+========================================================= */
+
+.view-property-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: 14px;
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    background: #f0ebff;
+
+    color: #6846c7;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    transition: .2s ease;
+}
+
+
+.view-property-button:hover {
+    background: #7657e8;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .property-preview {
+        grid-template-columns: 1fr;
+    }
+
+
+    .property-preview-image {
+        height: 240px;
+    }
+
+
+    .property-facts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .owner-contact-body {
+        grid-template-columns: 1fr;
+    }
+
+
+    .status-tracker {
+        grid-template-columns: 1fr;
+
+        gap: 13px;
+    }
+
+
+    .status-step:not(:last-child)::after {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .request-detail-page {
+        padding: 20px 15px 45px;
+    }
+
+
+    .request-header {
+        padding: 22px 20px;
+    }
+
+
+    .request-header-top {
+        flex-direction: column;
+    }
+
+
+    .request-content {
+        padding: 22px 20px 25px;
+    }
+
+
+    .request-header h1 {
+        font-size: 24px;
+    }
+
+
+    .property-preview {
+        padding: 12px;
+    }
+
+
+    .property-preview-image {
+        height: 200px;
+    }
+
+
+    .property-facts {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .property-facts {
+        grid-template-columns: 1fr;
+    }
+
+
+    .status-tracker {
+        padding: 14px;
+    }
+
+}
+
+</style>
+
+
+<main class="request-detail-page">
+
+
+    <!-- =====================================================
+         BACK
+    ====================================================== -->
+
+    <a
+        class="request-back"
+        href="{{ url_for('student_requests') }}"
+    >
+        ← My Requests
+    </a>
+
+
+    <!-- =====================================================
+         MAIN CARD
+    ====================================================== -->
+
+    <section class="request-main-card">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="request-header">
+
+            <div class="request-header-top">
+
+                <div>
+
+                    <span class="request-kicker">
+                        RENTAL REQUEST
+                    </span>
+
+                    <h1>
+                        {{ req.property.name }}
+                    </h1>
+
+                    <p class="request-date">
+                        Submitted
+                        {{ req.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </p>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                {% if req.status == 'accepted' %}
+
+                    <span class="request-status-badge accepted">
+                        ✓ Accepted
+                    </span>
+
+                {% elif req.status == 'rejected' %}
+
+                    <span class="request-status-badge rejected">
+                        ✕ Rejected
+                    </span>
+
+                {% else %}
+
+                    <span class="request-status-badge pending">
+                        ⏳ Pending
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS TRACKER
+            ================================================== -->
+
+            <div class="status-tracker">
+
+
+                <!-- SENT -->
+
+                <div class="status-step completed">
+
+                    <div class="status-step-circle">
+                        ✓
+                    </div>
+
+                    <div class="status-step-text">
+
+                        <span class="status-step-title">
+                            Request Sent
+                        </span>
+
+                        <span class="status-step-subtitle">
+                            Submitted
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REVIEW -->
+
+                <div
+                    class="
+                        status-step
+                        {% if req.status == 'pending' %}
+                            active
+                        {% elif req.status == 'accepted' %}
+                            completed
+                        {% elif req.status == 'rejected' %}
+                            rejected
+                        {% endif %}
+                    "
+                >
+
+                    <div class="status-step-circle">
+
+                        {% if req.status == 'pending' %}
+                            2
+                        {% elif req.status == 'accepted' %}
+                            ✓
+                        {% elif req.status == 'rejected' %}
+                            ✕
+                        {% else %}
+                            2
+                        {% endif %}
+
+                    </div>
+
+                    <div class="status-step-text">
+
+                        <span class="status-step-title">
+                            Owner Review
+                        </span>
+
+                        <span class="status-step-subtitle">
+
+                            {% if req.status == 'pending' %}
+                                Waiting for response
+                            {% elif req.status == 'accepted' %}
+                                Accepted
+                            {% else %}
+                                Not accepted
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESULT -->
+
+                <div
+                    class="
+                        status-step
+                        {% if req.status == 'accepted' %}
+                            completed
+                        {% elif req.status == 'rejected' %}
+                            rejected
+                        {% endif %}
+                    "
+                >
+
+                    <div class="status-step-circle">
+
+                        {% if req.status == 'accepted' %}
+                            ✓
+                        {% elif req.status == 'rejected' %}
+                            ✕
+                        {% else %}
+                            3
+                        {% endif %}
+
+                    </div>
+
+                    <div class="status-step-text">
+
+                        <span class="status-step-title">
+
+                            {% if req.status == 'accepted' %}
+                                Accepted
+                            {% elif req.status == 'rejected' %}
+                                Declined
+                            {% else %}
+                                Decision
+                            {% endif %}
+
+                        </span>
+
+                        <span class="status-step-subtitle">
+
+                            {% if req.status == 'accepted' %}
+                                You can contact owner
+                            {% elif req.status == 'rejected' %}
+                                Try another property
+                            {% else %}
+                                Awaiting decision
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <div class="request-content">
+
+
+            <!-- =================================================
+                 PROPERTY
+            ================================================== -->
+
+            <section>
+
+                <div class="property-preview">
+
+
+                    <!-- PROPERTY PHOTO -->
+
+                    <div class="property-preview-image">
+
+                        {% if req.property.photos %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/' + req.property.photos[0].filename
+                                ) }}"
+                                alt="{{ req.property.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="property-placeholder">
+                                🏠
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PROPERTY INFO -->
+
+                    <div class="property-preview-content">
+
+                        <span class="property-approved">
+                            ✓ ADMIN APPROVED
+                        </span>
+
+                        <h2>
+                            {{ req.property.name }}
+                        </h2>
+
+                        <p class="property-location">
+                            📍
+                            {{ req.property.address }}
+                        </p>
+
+                        <div class="property-price">
+
+                            ₹{{ '%.0f'|format(req.property.rent) }}
+
+                            <small>
+                                / {{ req.property.frequency|lower }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROPERTY FACTS -->
+
+                <div class="property-facts">
+
+                    <div class="property-fact">
+
+                        <span class="property-fact-label">
+                            Room Type
+                        </span>
+
+                        <span class="property-fact-value">
+                            {{ req.property.room_type }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="property-fact">
+
+                        <span class="property-fact-label">
+                            Deposit
+                        </span>
+
+                        <span class="property-fact-value">
+                            ₹{{ '%.0f'|format(req.property.deposit or 0) }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="property-fact">
+
+                        <span class="property-fact-label">
+                            Available
+                        </span>
+
+                        <span class="property-fact-value">
+
+                            {% if req.property.available_from %}
+
+                                {{ req.property.available_from.strftime('%d %b %Y') }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="property-fact">
+
+                        <span class="property-fact-label">
+                            College Distance
+                        </span>
+
+                        <span class="property-fact-value">
+
+                            {% if req.property.distance_college %}
+
+                                {{ req.property.distance_college }} km
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 AMENITIES
+            ================================================== -->
+
+            <section class="request-section">
+
+                <div class="request-section-title">
+
+                    <div class="request-section-icon">
+                        ✨
+                    </div>
+
+                    <h2>
+                        Amenities & Facilities
+                    </h2>
+
+                </div>
+
+
+                <div class="amenities">
+
+                    {% for amenity in req.property.amenities.split(',') if amenity.strip() %}
+
+                        <span class="amenity">
+                            {{ amenity.strip() }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="amenity">
+                            No amenities specified
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DESCRIPTION
+            ================================================== -->
+
+            <section class="request-section">
+
+                <div class="request-section-title">
+
+                    <div class="request-section-icon">
+                        🏠
+                    </div>
+
+                    <h2>
+                        About the Property
+                    </h2>
+
+                </div>
+
+
+                <div class="description-box">
+
+                    {{ req.property.description or
+                       'No additional description has been provided for this property.'
+                    }}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REQUEST MESSAGE
+            ================================================== -->
+
+            {% if req.message %}
+
+            <section class="request-section">
+
+                <div class="request-section-title">
+
+                    <div class="request-section-icon">
+                        💬
+                    </div>
+
+                    <h2>
+                        Your Request Message
+                    </h2>
+
+                </div>
+
+
+                <div class="request-message">
+
+                    <span class="request-message-label">
+                        Message sent to owner
+                    </span>
+
+                    <p>
+                        {{ req.message }}
+                    </p>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 PENDING
+            ================================================== -->
+
+            {% if req.status == 'pending' %}
+
+            <div class="status-message pending">
+
+                <div class="status-message-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <h3>
+                        Your request is being reviewed
+                    </h3>
+
+                    <p>
+                        The owner has received your request.
+                        You will be able to contact the owner once
+                        they accept your request.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACCEPTED
+            ================================================== -->
+
+            {% elif req.status == 'accepted' %}
+
+            <div class="status-message accepted">
+
+                <div class="status-message-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h3>
+                        Your rental request has been accepted!
+                    </h3>
+
+                    <p>
+                        Congratulations! The owner has accepted your
+                        request. Their contact details are available
+                        below so you can get in touch and discuss
+                        the rental.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 OWNER CONTACT
+            ================================================== -->
+
+            <section class="owner-contact">
+
+
+                <div class="owner-contact-header">
+
+                    <div class="owner-contact-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Owner Contact Details
+                        </h2>
+
+                        <p>
+                            Contact information unlocked after acceptance
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="owner-contact-body">
+
+
+                    <!-- OWNER -->
+
+                    <div>
+
+                        <div class="owner-profile">
+
+                            <div class="owner-avatar">
+
+                                {{ req.property.owner.name[:1]|upper }}
+
+                            </div>
+
+                            <div>
+
+                                <p class="owner-name">
+                                    {{ req.property.owner.name }}
+                                </p>
+
+                                <p class="owner-role">
+                                    Property Owner
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="owner-contact-details">
+
+
+                            <!-- EMAIL -->
+
+                            <div class="owner-contact-row">
+
+                                <div class="owner-contact-row-icon">
+                                    ✉️
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Email
+                                    </span>
+
+                                    <strong>
+                                        {{ req.property.owner.email }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PHONE -->
+
+                            <div class="owner-contact-row">
+
+                                <div class="owner-contact-row-icon">
+                                    📞
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Phone
+                                    </span>
+
+                                    <strong>
+                                        {{ req.property.owner.phone or 'Not provided' }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROPERTY SUMMARY -->
+
+                    <div class="accepted-property">
+
+                        <h3>
+                            Your Accepted Property
+                        </h3>
+
+
+                        <div class="accepted-row">
+
+                            <span>
+                                Property
+                            </span>
+
+                            <strong>
+                                {{ req.property.name }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="accepted-row">
+
+                            <span>
+                                Location
+                            </span>
+
+                            <strong>
+                                {{ req.property.locality }},
+                                {{ req.property.city }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="accepted-row">
+
+                            <span>
+                                Room
+                            </span>
+
+                            <strong>
+                                {{ req.property.room_type }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="accepted-row">
+
+                            <span>
+                                Rent
+                            </span>
+
+                            <strong>
+                                ₹{{ '%.0f'|format(req.property.rent) }}
+                                / {{ req.property.frequency|lower }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="accepted-row">
+
+                            <span>
+                                Address
+                            </span>
+
+                            <strong>
+                                {{ req.property.address }}
+                            </strong>
+
+                        </div>
+
+
+                        <a
+                            class="view-property-button"
+                            href="{{ url_for(
+                                'property_detail',
+                                property_id=req.property.id
+                            ) }}"
+                        >
+                            View Full Property →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REJECTED
+            ================================================== -->
+
+            {% elif req.status == 'rejected' %}
+
+            <div class="status-message rejected">
+
+                <div class="status-message-icon">
+                    ✕
+                </div>
+
+                <div>
+
+                    <h3>
+                        This request was not accepted
+                    </h3>
+
+                    <p>
+                        The owner has declined this rental request.
+                        Don't worry — you can continue exploring other
+                        approved properties and send a new request.
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}

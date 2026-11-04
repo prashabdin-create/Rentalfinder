@@ -1,0 +1,426 @@
+{% extends 'base.html' %}
+
+{% block title %}Rental Finder{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   HOME PAGE
+========================================================= */
+
+/* ---------------------------------------------------------
+   NAVBAR
+   Show ONLY the Rental Finder logo/brand
+--------------------------------------------------------- */
+
+body.home-page nav .navlinks,
+body.home-page nav .navbar-right,
+body.home-page nav .nav-actions,
+body.home-page nav .user-menu,
+body.home-page nav .dropdown,
+body.home-page nav button,
+body.home-page nav a:not(.brand) {
+    display: none !important;
+}
+
+
+/* Keep navbar clean */
+
+body.home-page nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+}
+
+
+/* =========================================================
+   PAGE BACKGROUND
+========================================================= */
+
+body.home-page {
+    background: #f8f7fc;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.home-hero {
+    min-height: 78vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    padding: 50px 20px;
+}
+
+
+/* =========================================================
+   SMALL TOP LABEL
+========================================================= */
+
+.home-pill {
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    border-radius: 999px;
+
+    background: #eee9ff;
+    color: #6d4aff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    letter-spacing: .3px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   MAIN HEADING
+========================================================= */
+
+.home-hero h1 {
+    margin: 0;
+
+    font-size: clamp(42px, 6vw, 70px);
+
+    line-height: 1.05;
+
+    color: #222;
+
+    font-weight: 800;
+}
+
+
+/* Highlighted word */
+
+.home-hero h1 em {
+    color: #7657e8;
+
+    font-style: normal;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.home-description {
+    max-width: 650px;
+
+    margin: 22px auto 42px;
+
+    color: #666;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ROLE CARDS
+========================================================= */
+
+.home-roles {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 22px;
+
+    width: min(900px, 100%);
+}
+
+
+/* Individual card */
+
+.home-role {
+    display: block;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    background: #fff;
+
+    border: 1px solid #e7e3ef;
+
+    border-radius: 20px;
+
+    padding: 32px 24px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* Hover */
+
+.home-role:hover {
+    transform: translateY(-6px);
+
+    border-color: #7657e8;
+
+    box-shadow:
+        0 16px 35px rgba(118, 87, 232, .13);
+}
+
+
+/* =========================================================
+   ROLE ICON
+========================================================= */
+
+.home-role-icon {
+    font-size: 40px;
+
+    margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   ROLE TITLE
+========================================================= */
+
+.home-role h2 {
+    margin: 0 0 8px;
+
+    color: #222;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   ROLE DESCRIPTION
+========================================================= */
+
+.home-role p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+
+    .home-roles {
+        grid-template-columns: 1fr;
+
+        max-width: 400px;
+    }
+
+
+    .home-hero {
+        padding: 40px 18px;
+    }
+
+
+    .home-hero h1 {
+        font-size: 44px;
+    }
+
+
+    .home-description {
+        font-size: 15px;
+
+        margin-bottom: 32px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .home-hero {
+        min-height: 75vh;
+
+        padding:
+            35px 15px
+            45px;
+    }
+
+
+    .home-pill {
+        font-size: 11px;
+
+        padding: 7px 13px;
+    }
+
+
+    .home-hero h1 {
+        font-size: 38px;
+    }
+
+
+    .home-description {
+        font-size: 14px;
+    }
+
+
+    .home-role {
+        padding: 26px 20px;
+    }
+
+
+    .home-role-icon {
+        font-size: 34px;
+    }
+
+
+    .home-role h2 {
+        font-size: 20px;
+    }
+}
+
+</style>
+
+
+<!-- =========================================================
+     MARK THIS PAGE AS HOME PAGE
+========================================================= -->
+
+<script>
+    document.body.classList.add("home-page");
+</script>
+
+
+<!-- =========================================================
+     HOME HERO
+========================================================= -->
+
+<section class="home-hero">
+
+
+    <!-- TOP LABEL -->
+
+    <span class="home-pill">
+        Student-focused rental discovery
+    </span>
+
+
+    <!-- MAIN HEADING -->
+
+    <h1>
+        Find a room that fits <em>you.</em>
+    </h1>
+
+
+    <!-- DESCRIPTION -->
+
+    <p class="home-description">
+        Compare approved rentals using budget, distance, room type
+        and amenities — with a transparent Match Score.
+    </p>
+
+
+    <!-- =====================================================
+         ROLE SELECTION
+    ====================================================== -->
+
+    <div class="home-roles">
+
+
+        <!-- =================================================
+             STUDENT
+        ================================================== -->
+
+        <a
+            href="{{ url_for('login', role='student') }}"
+            class="home-role"
+        >
+
+            <div class="home-role-icon">
+                👩‍🎓
+            </div>
+
+            <h2>
+                Student
+            </h2>
+
+            <p>
+                Login or create your account
+            </p>
+
+        </a>
+
+
+        <!-- =================================================
+             OWNER
+        ================================================== -->
+
+        <a
+            href="{{ url_for('login', role='owner') }}"
+            class="home-role"
+        >
+
+            <div class="home-role-icon">
+                🏠
+            </div>
+
+            <h2>
+                Owner
+            </h2>
+
+            <p>
+                List and manage properties
+            </p>
+
+        </a>
+
+
+        <!-- =================================================
+             ADMIN
+        ================================================== -->
+
+        <a
+            href="{{ url_for('admin_login') }}"
+            class="home-role"
+        >
+
+            <div class="home-role-icon">
+                🛡️
+            </div>
+
+            <h2>
+                Admin
+            </h2>
+
+            <p>
+                Approve properties and manage users
+            </p>
+
+        </a>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,1020 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Property{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+/* ================================
+   OWNER ADD PROPERTY PAGE
+================================ */
+
+.property-form-page {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 30px 22px 60px;
+}
+
+/* Page heading */
+
+.property-page-title {
+    margin-bottom: 24px;
+}
+
+.property-page-kicker {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: #c95b8a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.property-page-title h1 {
+    margin: 0;
+    color: #71374e;
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.property-page-title p {
+    margin: 8px 0 0;
+    color: #777;
+    font-size: 14px;
+}
+
+/* Main form */
+
+.property-form-card {
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #e7dfe3;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(50, 25, 40, .05);
+}
+
+/* Sections */
+
+.property-section {
+    margin-bottom: 34px;
+}
+
+.property-section:last-of-type {
+    margin-bottom: 25px;
+}
+
+.property-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee5e9;
+    color: #71374e;
+    font-size: 17px;
+}
+
+.property-section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    background: #fff0f5;
+    border-radius: 9px;
+    color: #c95b8a;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Form grid */
+
+.property-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.property-form-group {
+    min-width: 0;
+}
+
+.property-form-group.full {
+    grid-column: 1 / -1;
+}
+
+/* Labels */
+
+.property-form-group label,
+.photos-label,
+.amenities-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #444;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Inputs */
+
+.property-form-group input,
+.property-form-group select,
+.property-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #e2d9de;
+    border-radius: 10px;
+    outline: none;
+    background: #fffafb;
+    color: #333;
+    font-family: inherit;
+    font-size: 13px;
+    transition: .2s ease;
+}
+
+.property-form-group input,
+.property-form-group select {
+    height: 44px;
+}
+
+.property-form-group textarea {
+    min-height: 105px;
+    resize: vertical;
+}
+
+.property-form-group input:focus,
+.property-form-group select:focus,
+.property-form-group textarea:focus {
+    border-color: #c95b8a;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(201, 91, 138, .08);
+}
+
+.property-form-group input::placeholder,
+.property-form-group textarea::placeholder {
+    color: #aaa;
+}
+
+/* Map */
+
+.property-map-block {
+    margin-top: 22px;
+    padding: 18px;
+    background: #fff8fa;
+    border: 1px solid #ead9df;
+    border-radius: 14px;
+}
+
+.property-map-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 13px;
+}
+
+.property-map-title {
+    margin: 0 0 3px;
+    color: #444;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.property-map-hint {
+    margin: 0;
+    color: #888;
+    font-size: 11px;
+}
+
+.property-location-btn {
+    flex-shrink: 0;
+    padding: 9px 13px;
+    border: 1px solid #dfcbd3;
+    border-radius: 8px;
+    background: #fff;
+    color: #8a3c5a;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.property-location-btn:hover {
+    background: #c95b8a;
+    border-color: #c95b8a;
+    color: #fff;
+}
+
+#map {
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+    border: 1px solid #e4d8dd;
+    border-radius: 11px;
+}
+
+.property-coordinates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.property-coordinates input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 11px;
+    border: 1px solid #e2d9de;
+    border-radius: 8px;
+    background: #fff;
+    color: #777;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+/* Photos */
+
+.photos-area {
+    margin-bottom: 24px;
+}
+
+.photos-upload-box {
+    padding: 18px;
+    border: 1px dashed #d8c2cb;
+    border-radius: 12px;
+    background: #fff9fb;
+}
+
+.photos-upload-box input[type="file"] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 12px;
+    color: #666;
+}
+
+.photos-hint {
+    margin: 8px 0 0;
+    color: #888;
+    font-size: 11px;
+}
+
+/* ================================
+   AMENITIES
+================================ */
+
+.amenities-section {
+    margin-top: 10px;
+}
+
+.amenities-label {
+    margin-bottom: 5px;
+}
+
+.amenities-hint {
+    margin: 0 0 14px;
+    color: #888;
+    font-size: 12px;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.amenity-option {
+    position: relative;
+    cursor: pointer;
+}
+
+.amenity-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.amenity-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 54px;
+    box-sizing: border-box;
+    padding: 9px 11px;
+    background: #fff;
+    border: 1px solid #e4dce0;
+    border-radius: 11px;
+    color: #555;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.amenity-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff4f8;
+    border-radius: 9px;
+    font-size: 16px;
+    transition: .2s ease;
+}
+
+.amenity-check {
+    width: 18px;
+    height: 18px;
+    margin-left: auto;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    border: 1.5px solid #d8cbd0;
+    border-radius: 5px;
+    background: #fff;
+    position: relative;
+    transition: .2s ease;
+}
+
+/* Hover */
+
+.amenity-option:hover .amenity-card {
+    border-color: #d4a0b5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(60, 30, 45, .06);
+}
+
+/* Selected */
+
+.amenity-option input:checked + .amenity-card {
+    background: #fff5f8;
+    border-color: #c95b8a;
+    color: #8a3c5a;
+    box-shadow: 0 4px 13px rgba(201, 91, 138, .10);
+}
+
+.amenity-option input:checked + .amenity-card .amenity-icon {
+    background: #f9dce8;
+}
+
+.amenity-option input:checked + .amenity-card .amenity-check {
+    background: #c95b8a;
+    border-color: #c95b8a;
+}
+
+.amenity-option input:checked + .amenity-card .amenity-check::after {
+    content: "✓";
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* Description */
+
+.description-group {
+    margin-top: 22px;
+}
+
+.description-group textarea {
+    width: 100%;
+    min-height: 125px;
+    box-sizing: border-box;
+    padding: 12px 13px;
+    border: 1px solid #e2d9de;
+    border-radius: 10px;
+    outline: none;
+    background: #fffafb;
+    color: #333;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    transition: .2s ease;
+}
+
+.description-group textarea:focus {
+    border-color: #c95b8a;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(201, 91, 138, .08);
+}
+
+/* Submit */
+
+.submit-property-btn {
+    width: 100%;
+    margin-top: 28px;
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 10px;
+    background: #c95b8a;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.submit-property-btn:hover {
+    background: #8a3c5a;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px rgba(138, 60, 90, .18);
+}
+
+/* Responsive */
+
+@media (max-width: 850px) {
+    .amenities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .property-form-page {
+        padding: 20px 15px 40px;
+    }
+
+    .property-form-card {
+        padding: 21px;
+    }
+
+    .property-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-form-group.full {
+        grid-column: auto;
+    }
+
+    .property-map-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .property-location-btn {
+        width: 100%;
+    }
+
+    .property-coordinates {
+        grid-template-columns: 1fr;
+    }
+
+    .amenities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-page-title h1 {
+        font-size: 27px;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="property-form-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="property-page-title">
+        <span class="property-page-kicker">NEW LISTING</span>
+        <h1>Add your property</h1>
+        <p>Accurate details help students make better rental decisions.</p>
+    </div>
+
+
+    <!-- MAIN FORM -->
+
+    <form
+        class="property-form-card"
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+        <!-- ================================
+             01 PROPERTY INFORMATION
+        ================================= -->
+
+        <section class="property-section">
+
+            <h2 class="property-section-title">
+                <span class="property-section-number">01</span>
+                Property information
+            </h2>
+
+            <div class="property-form-grid">
+
+                <div class="property-form-group">
+                    <label>Property name *</label>
+                    <input
+                        name="name"
+                        required
+                        placeholder="Green View PG"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Room type *</label>
+
+                    <select name="room_type" required>
+                        <option value="">Select room type</option>
+
+                        {% for x in [
+                            'Single Room',
+                            '2 Sharing',
+                            '3 Sharing',
+                            '4 Sharing',
+                            'PG',
+                            'Hostel',
+                            '1 BHK',
+                            '2 BHK'
+                        ] %}
+
+                        <option value="{{ x }}">{{ x }}</option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Monthly rent (₹) *</label>
+                    <input
+                        type="number"
+                        name="rent"
+                        min="0"
+                        required
+                        placeholder="8000"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Security deposit (₹)</label>
+                    <input
+                        type="number"
+                        name="deposit"
+                        min="0"
+                        placeholder="10000"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Rent frequency *</label>
+
+                    <select name="frequency" required>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Daily">Daily</option>
+                    </select>
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Available from *</label>
+                    <input
+                        type="date"
+                        name="available_from"
+                        required
+                    >
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             02 LOCATION
+        ================================= -->
+
+        <section class="property-section">
+
+            <h2 class="property-section-title">
+                <span class="property-section-number">02</span>
+                Location
+            </h2>
+
+            <div class="property-form-grid">
+
+                <div class="property-form-group">
+                    <label>City *</label>
+                    <input
+                        name="city"
+                        required
+                        placeholder="Nashik"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Area / locality *</label>
+                    <input
+                        name="locality"
+                        required
+                        placeholder="College Road"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Nearby college / landmark</label>
+                    <input
+                        name="landmark"
+                        placeholder="Near Government College"
+                    >
+                </div>
+
+
+                <div class="property-form-group">
+                    <label>Distance from college (KM)</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        name="distance_college"
+                        placeholder="1.5"
+                    >
+                </div>
+
+
+                <div class="property-form-group full">
+                    <label>Full property address *</label>
+
+                    <textarea
+                        name="address"
+                        required
+                        placeholder="Enter the complete property address..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+
+            <!-- MAP -->
+
+            <div class="property-map-block">
+
+                <div class="property-map-head">
+
+                    <div>
+                        <p class="property-map-title">
+                            Property map location
+                        </p>
+
+                        <p class="property-map-hint">
+                            Click anywhere on the map to set the property location, or use your current location.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="property-location-btn"
+                        onclick="locateMe()"
+                    >
+                        📍 Use my location
+                    </button>
+
+                </div>
+
+
+                <div id="map"></div>
+
+
+                <div class="property-coordinates">
+
+                    <input
+                        id="latitude"
+                        name="latitude"
+                        readonly
+                        placeholder="Latitude"
+                    >
+
+                    <input
+                        id="longitude"
+                        name="longitude"
+                        readonly
+                        placeholder="Longitude"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             03 PHOTOS & FACILITIES
+        ================================= -->
+
+        <section class="property-section">
+
+            <h2 class="property-section-title">
+                <span class="property-section-number">03</span>
+                Photos & facilities
+            </h2>
+
+
+            <!-- PHOTOS -->
+
+            <div class="photos-area">
+
+                <label class="photos-label">
+                    Property photos *
+                </label>
+
+                <div class="photos-upload-box">
+
+                    <input
+                        type="file"
+                        name="photos"
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        multiple
+                        required
+                    >
+
+                    <p class="photos-hint">
+                        Add clear photos of the room, exterior, kitchen, bathroom and common areas.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- AMENITIES -->
+
+            <div class="amenities-section">
+
+                <label class="amenities-label">
+                    Amenities
+                </label>
+
+                <p class="amenities-hint">
+                    Select all facilities available at your property.
+                </p>
+
+
+                <div class="amenities-grid">
+
+
+                    <!-- AIR CONDITIONING -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Air Conditioning"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">❄️</span>
+
+                            <span>Air Conditioning</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- WIFI -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Wi-Fi"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">📶</span>
+
+                            <span>Wi-Fi</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- FOOD -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Food"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🍽️</span>
+
+                            <span>Food</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- PARKING -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Parking"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🚗</span>
+
+                            <span>Parking</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- WASHING MACHINE -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Washing Machine"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🧺</span>
+
+                            <span>Washing Machine</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- ELECTRICITY -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="24/7 Electricity"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">⚡</span>
+
+                            <span>24/7 Electricity</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- BATHROOM -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Attached Bathroom"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🚿</span>
+
+                            <span>Attached Bathroom</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- LIFT -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Lift"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🛗</span>
+
+                            <span>Lift</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- SECURITY -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Security"
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">🔐</span>
+
+                            <span>Security</span>
+
+                            <span class="amenity-check"></span>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="description-group">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    placeholder="Describe the property, surroundings, house rules, facilities and anything else students should know..."
+                ></textarea>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUBMIT -->
+
+        <button
+            type="submit"
+            class="submit-property-btn"
+        >
+            Submit for Admin Approval
+        </button>
+
+    </form>
+
+</main>
+
+
+<!-- LEAFLET -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+
+{% endblock %}

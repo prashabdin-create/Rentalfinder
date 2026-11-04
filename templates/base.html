@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        {% block title %}Rental Finder{% endblock %}
+    </title>
+
+
+    <!-- Google Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/app.css') }}"
+    >
+
+
+    {% block head %}{% endblock %}
+
+</head>
+
+
+<body
+    {% if request.endpoint in ['index', 'login', 'register', 'admin_login'] %}
+        class="minimal-navbar-page"
+    {% endif %}
+>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar">
+
+
+    <!-- =====================================================
+         RENTAL FINDER BRAND
+         ALWAYS VISIBLE
+    ====================================================== -->
+
+    <a
+        class="brand"
+        href="{{ url_for('index') }}"
+    >
+        🏠
+        <span>Rental Finder</span>
+    </a>
+
+
+    <!-- =====================================================
+         NORMAL NAVIGATION
+         HIDDEN ON HOME / LOGIN / REGISTER / ADMIN LOGIN
+    ====================================================== -->
+
+    {% if current_user.is_authenticated
+          and request.endpoint not in ['index', 'login', 'register', 'admin_login'] %}
+
+
+        <div class="navlinks">
+
+
+            <!-- Dashboard -->
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+
+            <!-- Student -->
+
+            {% if current_user.role == 'student' %}
+
+                <a href="{{ url_for('properties') }}">
+                    Find Rooms
+                </a>
+
+                <a href="{{ url_for('student_requests') }}">
+                    My Requests
+                </a>
+
+
+            <!-- Owner -->
+
+            {% elif current_user.role == 'owner' %}
+
+                <a href="{{ url_for('owner_requests') }}">
+                    See Requests
+                </a>
+
+                <a href="{{ url_for('owner_properties') }}">
+                    My Properties
+                </a>
+
+                <a href="{{ url_for('add_property') }}">
+                    Add Property
+                </a>
+
+
+            <!-- Admin -->
+
+            {% else %}
+
+                <a href="{{ url_for('admin_requests') }}">
+                    Requests
+                </a>
+
+                <a href="{{ url_for('admin_properties') }}">
+                    Properties
+                </a>
+
+                <a href="{{ url_for('admin_users') }}">
+                    Users
+                </a>
+
+            {% endif %}
+
+
+            <!-- Logout -->
+
+            <a
+                class="logout"
+                href="{{ url_for('logout') }}"
+            >
+                Logout
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             USER NAME
+             ONLY SHOWN AFTER LOGIN ON NORMAL PAGES
+        ================================================== -->
+
+        <div class="user-chip">
+
+            <span class="avatar">
+                {{ current_user.name[0]|upper }}
+            </span>
+
+            <span>
+                {{ current_user.name }}
+            </span>
+
+        </div>
+
+
+    {% endif %}
+
+</nav>
+
+
+<!-- =========================================================
+     FLASH MESSAGES
+========================================================= -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        <div class="flash-wrap">
+
+            {% for category, message in messages %}
+
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- =========================================================
+     PAGE CONTENT
+========================================================= -->
+
+{% block content %}
+
+{% endblock %}
+
+
+<!-- =========================================================
+     MINIMAL NAVBAR STYLING
+     HOME + LOGIN + REGISTER + ADMIN LOGIN
+========================================================= -->
+
+<style>
+
+    /* =====================================================
+       MINIMAL NAVBAR
+    ===================================================== */
+
+    body.minimal-navbar-page {
+        margin: 0;
+        background: #f8f7fc;
+    }
+
+
+    body.minimal-navbar-page .navbar {
+
+        width: 100%;
+
+        min-height: 70px;
+
+        box-sizing: border-box;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        padding: 0 35px;
+
+        margin: 0;
+
+        background: #ffffff;
+
+        border-bottom: 1px solid #eeeaf2;
+
+        box-shadow:
+            0 2px 10px rgba(30, 20, 40, 0.035);
+
+        position: relative;
+
+        z-index: 1000;
+    }
+
+
+    /* =====================================================
+       RENTAL FINDER BRAND
+    ===================================================== */
+
+    body.minimal-navbar-page .navbar .brand {
+
+        display: inline-flex !important;
+
+        align-items: center;
+
+        gap: 8px;
+
+        margin: 0;
+
+        padding: 0;
+
+        color: #6846c7;
+
+        text-decoration: none;
+
+        font-family: 'Poppins', sans-serif;
+
+        font-size: 23px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    body.minimal-navbar-page .navbar .brand:hover {
+
+        color: #5738b5;
+
+        text-decoration: none;
+    }
+
+
+    /* =====================================================
+       COMPLETELY HIDE OTHER NAVBAR CONTENT
+    ===================================================== */
+
+    body.minimal-navbar-page .navbar .navlinks,
+    body.minimal-navbar-page .navbar .user-chip {
+
+        display: none !important;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 600px) {
+
+        body.minimal-navbar-page .navbar {
+
+            min-height: 62px;
+
+            padding: 0 20px;
+        }
+
+
+        body.minimal-navbar-page .navbar .brand {
+
+            font-size: 20px;
+        }
+
+    }
+
+</style>
+
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ role|capitalize }} Login | Rental Finder
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   LOGIN PAGE
+========================================================= */
+
+.login-page {
+    min-height: calc(100vh - 71px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LOGIN CARD
+========================================================= */
+
+.login-card {
+    width: 100%;
+    max-width: 445px;
+
+    padding: 40px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e0eb;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 15px 45px rgba(45, 30, 65, 0.08);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.login-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 17px;
+
+    background: #eee9ff;
+
+    font-size: 31px;
+}
+
+
+/* =========================================================
+   PORTAL LABEL
+========================================================= */
+
+.login-card .section-kicker {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: #7657e8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.login-card h1 {
+    margin: 0;
+
+    color: #202020;
+
+    font-size: 31px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.login-description {
+    margin: 10px 0 28px;
+
+    color: #777;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.login-card form {
+    text-align: left;
+}
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.login-card label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #3f3f3f;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.login-card input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px;
+
+    margin-bottom: 18px;
+
+    border: 1px solid #ddd8e5;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #333;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    transition: .2s ease;
+}
+
+
+.login-card input::placeholder {
+    color: #aaa;
+}
+
+
+.login-card input:focus {
+    border-color: #7657e8;
+
+    box-shadow:
+        0 0 0 3px rgba(118, 87, 232, .10);
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+.login-button {
+    width: 100%;
+
+    min-height: 49px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #7657e8;
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.login-button:hover {
+    background: #6242d2;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 20px rgba(118, 87, 232, .20);
+}
+
+
+/* =========================================================
+   REGISTER LINK
+========================================================= */
+
+.login-switch {
+    margin: 22px 0 0;
+
+    color: #888;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.login-switch a {
+    color: #7657e8;
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.login-switch a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .login-page {
+        min-height: calc(100vh - 63px);
+
+        padding: 30px 15px;
+    }
+
+
+    .login-card {
+        padding: 30px 22px;
+
+        border-radius: 18px;
+    }
+
+
+    .login-card h1 {
+        font-size: 27px;
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     LOGIN PAGE
+========================================================= -->
+
+<main class="login-page">
+
+    <div class="login-card">
+
+
+        <!-- ICON -->
+
+        <div class="login-icon">
+            {{ '🎓' if role == 'student' else '🏡' }}
+        </div>
+
+
+        <!-- PORTAL -->
+
+        <span class="section-kicker">
+            {{ role|upper }} PORTAL
+        </span>
+
+
+        <!-- TITLE -->
+
+        <h1>
+            Welcome back
+        </h1>
+
+
+        <!-- DESCRIPTION -->
+
+        <p class="login-description">
+            Log in to continue to your {{ role }} dashboard.
+        </p>
+
+
+        <!-- FORM -->
+
+        <form method="post">
+
+
+            <!-- EMAIL -->
+
+            <label for="email">
+                Email address
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                name="email"
+                required
+                placeholder="you@example.com"
+                autocomplete="email"
+            >
+
+
+            <!-- PASSWORD -->
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+                placeholder="••••••••"
+                autocomplete="current-password"
+            >
+
+
+            <!-- LOGIN -->
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Login
+            </button>
+
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <p class="login-switch">
+
+            New here?
+
+            <a href="{{ url_for('register', role=role) }}">
+                Create a {{ role }} account
+            </a>
+
+        </p>
+
+
+    </div>
+
+</main>
+
+{% endblock %}

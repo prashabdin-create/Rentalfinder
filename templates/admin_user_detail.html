@@ -1,0 +1,1457 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ user.name }} | User Details | Rental Finder
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   ADMIN USER DETAIL
+========================================================= */
+
+.admin-user-detail-page {
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    padding: 30px 22px 70px;
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+.user-detail-back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 18px;
+
+    color: #7657e8;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 750;
+}
+
+.user-detail-back:hover {
+    color: #5738b5;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.user-detail-card {
+    overflow: hidden;
+
+    background: #fff;
+
+    border: 1px solid #e5e0ea;
+
+    border-radius: 21px;
+
+    box-shadow:
+        0 11px 38px rgba(45, 30, 60, .06);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.user-detail-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 28px 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf8ff,
+            #ffffff
+        );
+
+    border-bottom: 1px solid #eee9f2;
+}
+
+
+.user-header-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.user-detail-avatar {
+    width: 62px;
+
+    height: 62px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eee7ff,
+            #f7eafa
+        );
+
+    color: #7657e8;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+
+.user-detail-kicker {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #7657e8;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+}
+
+
+.user-detail-header h1 {
+    margin: 0;
+
+    color: #30243a;
+
+    font-size: 27px;
+
+    font-weight: 800;
+}
+
+
+.user-detail-subtitle {
+    margin: 4px 0 0;
+
+    color: #888;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+.header-delete-btn {
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    border: 1px solid #efcfd4;
+
+    border-radius: 9px;
+
+    background: #fff7f8;
+
+    color: #b34b58;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+.header-delete-btn:hover {
+    background: #b34b58;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.user-detail-content {
+    padding: 28px 30px 34px;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.user-detail-section {
+    margin-bottom: 28px;
+}
+
+.user-detail-section:last-child {
+    margin-bottom: 0;
+}
+
+
+.user-section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+
+.user-section-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #f0ebff;
+
+    font-size: 15px;
+}
+
+
+.user-section-title h2 {
+    margin: 0;
+
+    color: #3b2e45;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+
+.user-section-title p {
+    margin: 2px 0 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   ACCOUNT DETAILS
+========================================================= */
+
+.account-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+}
+
+
+.account-box {
+    padding: 15px;
+
+    border: 1px solid #e9e3ed;
+
+    border-radius: 10px;
+
+    background: #fcfbfd;
+}
+
+
+.account-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+.account-value {
+    display: block;
+
+    color: #45374d;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   REQUIREMENTS
+========================================================= */
+
+.requirements-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+}
+
+
+.requirement-box {
+    min-height: 76px;
+
+    padding: 14px;
+
+    border: 1px solid #e7e1ec;
+
+    border-radius: 11px;
+
+    background: #fff;
+}
+
+
+.requirement-box.wide {
+    grid-column: 1 / -1;
+}
+
+
+.requirement-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #999;
+
+    font-size: 9px;
+
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+}
+
+
+.requirement-value {
+    color: #514458;
+
+    font-size: 13px;
+
+    font-weight: 750;
+}
+
+
+.requirement-price {
+    color: #7657e8;
+
+    font-size: 17px;
+
+    font-weight: 850;
+}
+
+
+/* =========================================================
+   AMENITIES
+========================================================= */
+
+.requirement-amenities {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+
+.requirement-amenity {
+    padding: 7px 9px;
+
+    border: 1px solid #e2d7ef;
+
+    border-radius: 7px;
+
+    background: #faf7ff;
+
+    color: #684d79;
+
+    font-size: 10px;
+
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   REQUESTS
+========================================================= */
+
+.request-list {
+    display: grid;
+
+    gap: 10px;
+}
+
+
+.request-card {
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border: 1px solid #e8e2eb;
+
+    border-radius: 11px;
+
+    background: #fff;
+}
+
+
+.request-property-name {
+    margin: 0 0 4px;
+
+    color: #3b2e45;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.request-property-info {
+    margin: 0;
+
+    color: #888;
+
+    font-size: 10px;
+}
+
+
+.request-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 10px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+.request-status.pending {
+    background: #fff4dc;
+
+    color: #a56d14;
+}
+
+
+.request-status.accepted {
+    background: #e8f7ee;
+
+    color: #287448;
+}
+
+
+.request-status.rejected {
+    background: #fdecee;
+
+    color: #a84753;
+}
+
+
+/* =========================================================
+   OWNER PROPERTIES
+========================================================= */
+
+.properties-list {
+    display: grid;
+
+    gap: 12px;
+}
+
+
+.owner-property {
+    display: grid;
+
+    grid-template-columns: 100px 1fr auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px;
+
+    border: 1px solid #e8e2eb;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    transition: .2s ease;
+}
+
+
+.owner-property:hover {
+    border-color: #d8cdef;
+
+    background: #fcfbff;
+}
+
+
+.owner-property-photo {
+    width: 100px;
+
+    height: 76px;
+
+    overflow: hidden;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff1f6,
+            #f2edff
+        );
+}
+
+
+.owner-property-photo img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+.owner-property-placeholder {
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+}
+
+
+.owner-property-name {
+    margin: 0 0 5px;
+
+    color: #392c43;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.owner-property-location {
+    margin: 0 0 6px;
+
+    color: #888;
+
+    font-size: 10px;
+}
+
+
+.owner-property-rent {
+    color: #7657e8;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.owner-property-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.property-status {
+    padding: 7px 9px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+.property-status.approved {
+    background: #e8f7ee;
+
+    color: #287448;
+}
+
+
+.property-status.pending {
+    background: #fff4dc;
+
+    color: #a56d14;
+}
+
+
+.property-status.rejected {
+    background: #fdecee;
+
+    color: #a84753;
+}
+
+
+.view-property-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 0 10px;
+
+    border: 1px solid #ddd4f5;
+
+    border-radius: 8px;
+
+    background: #f7f3ff;
+
+    color: #7657e8;
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+.view-property-btn:hover {
+    background: #7657e8;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.detail-divider {
+    height: 1px;
+
+    margin: 28px 0;
+
+    background: #eee9f0;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.detail-empty {
+    padding: 32px 20px;
+
+    text-align: center;
+
+    border: 1px dashed #e3dde8;
+
+    border-radius: 11px;
+
+    background: #fbfafc;
+}
+
+
+.detail-empty-icon {
+    margin-bottom: 7px;
+
+    font-size: 28px;
+}
+
+
+.detail-empty p {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .requirements-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .account-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .owner-property {
+        grid-template-columns: 80px 1fr;
+    }
+
+    .owner-property-actions {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+@media (max-width: 620px) {
+
+    .admin-user-detail-page {
+        padding: 20px 15px 45px;
+    }
+
+    .user-detail-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 22px 20px;
+    }
+
+    .user-detail-content {
+        padding: 22px 20px 27px;
+    }
+
+    .account-grid,
+    .requirements-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .requirement-box.wide {
+        grid-column: auto;
+    }
+
+    .request-card {
+        grid-template-columns: 1fr;
+    }
+
+    .owner-property {
+        grid-template-columns: 1fr;
+    }
+
+    .owner-property-photo {
+        width: 100%;
+
+        height: 180px;
+    }
+
+    .owner-property-actions {
+        grid-column: auto;
+
+        justify-content: space-between;
+    }
+
+}
+
+</style>
+
+
+<main class="admin-user-detail-page">
+
+
+    <!-- =====================================================
+         BACK
+    ====================================================== -->
+
+    <a
+        class="user-detail-back"
+        href="{{ url_for('admin_users') }}"
+    >
+        ← Back to Users
+    </a>
+
+
+    <!-- =====================================================
+         MAIN CARD
+    ====================================================== -->
+
+    <section class="user-detail-card">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="user-detail-header">
+
+            <div class="user-header-left">
+
+                <div class="user-detail-avatar">
+                    {{ user.name[:1]|upper }}
+                </div>
+
+                <div>
+
+                    <span class="user-detail-kicker">
+
+                        {% if user.role == 'student' %}
+                            STUDENT ACCOUNT
+                        {% else %}
+                            OWNER ACCOUNT
+                        {% endif %}
+
+                    </span>
+
+                    <h1>
+                        {{ user.name }}
+                    </h1>
+
+                    <p class="user-detail-subtitle">
+                        {{ user.email }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELETE -->
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'admin_delete_user',
+                    user_id=user.id
+                ) }}"
+                style="margin:0;"
+                onsubmit="return confirm('Delete {{ user.name }} permanently? This action cannot be undone.');"
+            >
+
+                <button
+                    type="submit"
+                    class="header-delete-btn"
+                >
+                    🗑 Delete User
+                </button>
+
+            </form>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <div class="user-detail-content">
+
+
+            <!-- =================================================
+                 ACCOUNT INFORMATION
+            ================================================== -->
+
+            <section class="user-detail-section">
+
+                <div class="user-section-title">
+
+                    <div class="user-section-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Account Information
+                        </h2>
+
+                        <p>
+                            Basic details of this user
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-grid">
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            Full Name
+                        </span>
+
+                        <span class="account-value">
+                            {{ user.name }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            Email
+                        </span>
+
+                        <span class="account-value">
+                            {{ user.email }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            Phone
+                        </span>
+
+                        <span class="account-value">
+                            {{ user.phone or 'Not provided' }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            Role
+                        </span>
+
+                        <span class="account-value">
+                            {{ user.role|capitalize }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            User ID
+                        </span>
+
+                        <span class="account-value">
+                            #{{ user.id }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-box">
+
+                        <span class="account-label">
+                            Registered
+                        </span>
+
+                        <span class="account-value">
+
+                            {% if user.created_at %}
+
+                                {{ user.created_at.strftime('%d %b %Y') }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {% if user.role == 'student' %}
+
+
+            <div class="detail-divider"></div>
+
+
+            <!-- =================================================
+                 STUDENT REQUIREMENTS
+            ================================================== -->
+
+            <section class="user-detail-section">
+
+                <div class="user-section-title">
+
+                    <div class="user-section-icon">
+                        🎯
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Rental Requirements
+                        </h2>
+
+                        <p>
+                            Preferences saved by the student
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if requirements %}
+
+                <div class="requirements-grid">
+
+
+                    <div class="requirement-box">
+
+                        <span class="requirement-label">
+                            Budget
+                        </span>
+
+                        <span class="requirement-value requirement-price">
+
+                            {% if requirements.budget %}
+
+                                ₹{{ '%.0f'|format(requirements.budget) }}
+
+                            {% else %}
+
+                                Not specified
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="requirement-box">
+
+                        <span class="requirement-label">
+                            Room Type
+                        </span>
+
+                        <span class="requirement-value">
+                            {{ requirements.room_type or 'Not specified' }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="requirement-box">
+
+                        <span class="requirement-label">
+                            City
+                        </span>
+
+                        <span class="requirement-value">
+                            {{ requirements.city or 'Not specified' }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="requirement-box">
+
+                        <span class="requirement-label">
+                            Locality
+                        </span>
+
+                        <span class="requirement-value">
+                            {{ requirements.locality or 'Not specified' }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="requirement-box wide">
+
+                        <span class="requirement-label">
+                            Preferred Amenities
+                        </span>
+
+
+                        {% if requirements.amenities %}
+
+                        <div class="requirement-amenities">
+
+                            {% for amenity in requirements.amenities.split(',') if amenity.strip() %}
+
+                            <span class="requirement-amenity">
+                                ✓ {{ amenity.strip() }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="requirement-value">
+                            No amenities specified
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="detail-empty">
+
+                    <div class="detail-empty-icon">
+                        🎯
+                    </div>
+
+                    <p>
+                        This student has not saved rental requirements yet.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <div class="detail-divider"></div>
+
+
+            <!-- =================================================
+                 STUDENT REQUESTS
+            ================================================== -->
+
+            <section class="user-detail-section">
+
+                <div class="user-section-title">
+
+                    <div class="user-section-icon">
+                        📨
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Rental Requests
+                        </h2>
+
+                        <p>
+                            Properties requested by this student
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if requests %}
+
+                <div class="request-list">
+
+                    {% for r in requests %}
+
+                    <div class="request-card">
+
+
+                        <div>
+
+                            <p class="request-property-name">
+                                {{ r.property.name }}
+                            </p>
+
+                            <p class="request-property-info">
+
+                                📍
+                                {{ r.property.locality }},
+                                {{ r.property.city }}
+
+                                ·
+
+                                ₹{{ '%.0f'|format(r.property.rent) }}
+
+                                ·
+
+                                {{ r.property.room_type }}
+
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            class="request-status {{ r.status }}"
+                        >
+
+                            {% if r.status == 'accepted' %}
+                                ✓ Accepted
+                            {% elif r.status == 'rejected' %}
+                                ✕ Rejected
+                            {% else %}
+                                ⏳ Pending
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="detail-empty">
+
+                    <div class="detail-empty-icon">
+                        📨
+                    </div>
+
+                    <p>
+                        This student has not sent any rental requests.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            {% else %}
+
+
+            <div class="detail-divider"></div>
+
+
+            <!-- =================================================
+                 OWNER PROPERTIES
+            ================================================== -->
+
+            <section class="user-detail-section">
+
+                <div class="user-section-title">
+
+                    <div class="user-section-icon">
+                        🏠
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Owner Properties
+                        </h2>
+
+                        <p>
+                            All properties listed by {{ user.name }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if properties %}
+
+                <div class="properties-list">
+
+                    {% for p in properties %}
+
+                    <div class="owner-property">
+
+
+                        <!-- PHOTO -->
+
+                        <div class="owner-property-photo">
+
+                            {% if p.photos %}
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='uploads/' + p.photos[0].filename
+                                    ) }}"
+                                    alt="{{ p.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="owner-property-placeholder">
+                                    🏠
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- INFORMATION -->
+
+                        <div>
+
+                            <p class="owner-property-name">
+                                {{ p.name }}
+                            </p>
+
+                            <p class="owner-property-location">
+
+                                📍
+                                {{ p.locality }},
+                                {{ p.city }}
+
+                                ·
+
+                                {{ p.room_type }}
+
+                            </p>
+
+                            <span class="owner-property-rent">
+
+                                ₹{{ '%.0f'|format(p.rent) }}
+
+                                / {{ p.frequency|lower }}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="owner-property-actions">
+
+
+                            {% if p.status == 'approved' %}
+
+                                <span class="property-status approved">
+                                    ✓ Approved
+                                </span>
+
+                            {% elif p.status == 'pending' %}
+
+                                <span class="property-status pending">
+                                    ⏳ Pending
+                                </span>
+
+                            {% elif p.status == 'rejected' %}
+
+                                <span class="property-status rejected">
+                                    ✕ Rejected
+                                </span>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_property_detail',
+                                    property_id=p.id
+                                ) }}"
+                                class="view-property-btn"
+                            >
+                                👁 View Property
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="detail-empty">
+
+                    <div class="detail-empty-icon">
+                        🏠
+                    </div>
+
+                    <p>
+                        This owner has not added any properties yet.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}

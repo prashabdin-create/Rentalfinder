@@ -1,0 +1,1863 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Property | Rental Finder
+{% endblock %}
+
+{% block head %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   EDIT PROPERTY PAGE
+========================================================= */
+
+.property-form-page {
+    max-width: 1050px;
+
+    margin: 0 auto;
+
+    padding: 38px 22px 70px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.property-form-header {
+    margin-bottom: 24px;
+}
+
+
+.property-form-kicker {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #7657e8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+}
+
+
+.property-form-header h1 {
+    margin: 0;
+
+    color: #30243a;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+
+.property-form-header p {
+    margin: 8px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.property-form-card {
+    padding: 30px;
+
+    background: #fff;
+
+    border: 1px solid #e6e0ea;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 32px rgba(45, 30, 60, .05);
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.property-form-section {
+    margin-bottom: 31px;
+
+    padding-bottom: 29px;
+
+    border-bottom: 1px solid #eee9f0;
+}
+
+
+.property-form-section:last-of-type {
+    margin-bottom: 0;
+
+    padding-bottom: 0;
+
+    border-bottom: 0;
+}
+
+
+.property-section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    margin-bottom: 19px;
+}
+
+
+.property-section-number {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #f0ebff;
+
+    color: #7657e8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.property-section-title h2 {
+    margin: 0;
+
+    color: #3b2e44;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+
+.property-section-title p {
+    margin: 3px 0 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.property-form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 17px;
+}
+
+
+.property-form-field {
+    min-width: 0;
+}
+
+
+.property-form-field.full {
+    grid-column: 1 / -1;
+}
+
+
+.property-form-field label,
+.property-form-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #444;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+
+.property-form-field input,
+.property-form-field select,
+.property-form-field textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 13px;
+
+    border: 1px solid #ddd8e5;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #444;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    transition: .2s ease;
+}
+
+
+.property-form-field textarea {
+    min-height: 105px;
+
+    resize: vertical;
+
+    line-height: 1.6;
+}
+
+
+.property-form-field input:focus,
+.property-form-field select:focus,
+.property-form-field textarea:focus {
+    border-color: #7657e8;
+
+    box-shadow:
+        0 0 0 3px rgba(118, 87, 232, .09);
+}
+
+
+.property-form-field input::placeholder,
+.property-form-field textarea::placeholder {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.property-map-box {
+    margin-top: 19px;
+
+    padding: 15px;
+
+    border: 1px solid #e7e1ea;
+
+    border-radius: 13px;
+
+    background: #fbfafc;
+}
+
+
+.property-map-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 12px;
+}
+
+
+.property-map-title {
+    color: #444;
+
+    font-size: 12px;
+
+    font-weight: 750;
+}
+
+
+.property-map-hint {
+    margin: 3px 0 0;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+.property-location-button {
+    padding: 8px 12px;
+
+    border: 1px solid #ddd3ef;
+
+    border-radius: 8px;
+
+    background: #f8f4ff;
+
+    color: #7657e8;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+
+.property-location-button:hover {
+    background: #7657e8;
+
+    color: #fff;
+}
+
+
+#edit-property-map {
+    width: 100%;
+
+    height: 280px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    border: 1px solid #e4dfe8;
+}
+
+
+.property-coordinates {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+
+.property-coordinates input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    border: 1px solid #e2dce6;
+
+    border-radius: 8px;
+
+    background: #f7f5f8;
+
+    color: #777;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CURRENT PHOTOS
+========================================================= */
+
+.current-photos {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 17px;
+}
+
+
+.current-photo {
+    overflow: hidden;
+
+    height: 125px;
+
+    border: 1px solid #e6e0e9;
+
+    border-radius: 10px;
+
+    background: #f8f5fa;
+}
+
+
+.current-photo img {
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+.photo-upload-box {
+    padding: 18px;
+
+    border: 1px dashed #d9cee5;
+
+    border-radius: 12px;
+
+    background: #fcfaff;
+}
+
+
+.photo-upload-box label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #444;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+
+.photo-upload-box input[type="file"] {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px;
+
+    border: 1px solid #e1dbe8;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    font-family: inherit;
+
+    font-size: 11px;
+}
+
+
+.photo-upload-hint {
+    margin: 8px 0 0;
+
+    color: #999;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   AMENITIES
+========================================================= */
+
+.amenities-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 10px;
+}
+
+
+.amenity-option {
+    position: relative;
+}
+
+
+.amenity-option input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.amenity-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 47px;
+
+    box-sizing: border-box;
+
+    padding: 8px 11px;
+
+    border: 1px solid #e5dfe9;
+
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: #5f5664;
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.amenity-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 29px;
+
+    height: 29px;
+
+    flex-shrink: 0;
+
+    border-radius: 7px;
+
+    background: #f6f2fa;
+
+    font-size: 14px;
+}
+
+
+.amenity-check {
+    margin-left: auto;
+
+    opacity: 0;
+
+    color: #fff;
+
+    font-size: 10px;
+
+    font-weight: 900;
+}
+
+
+.amenity-option input:checked + .amenity-card {
+    border-color: #cdb9f4;
+
+    background: #f8f4ff;
+
+    color: #6846c7;
+
+    box-shadow:
+        0 3px 10px rgba(118, 87, 232, .06);
+}
+
+
+.amenity-option input:checked + .amenity-card .amenity-icon {
+    background: #7657e8;
+
+    color: #fff;
+}
+
+
+.amenity-option input:checked + .amenity-card .amenity-check {
+    opacity: 1;
+
+    color: #7657e8;
+}
+
+
+/* =========================================================
+   RE-APPROVAL NOTICE
+========================================================= */
+
+.reapproval-note {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-top: 24px;
+
+    padding: 14px;
+
+    border: 1px solid #eadfca;
+
+    border-radius: 10px;
+
+    background: #fffaf0;
+
+    color: #8c691e;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+
+.reapproval-icon {
+    flex-shrink: 0;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.property-form-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 27px;
+}
+
+
+.cancel-property-btn,
+.save-property-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 45px;
+
+    padding: 0 19px;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.cancel-property-btn {
+    border: 1px solid #e0dbe3;
+
+    background: #fff;
+
+    color: #777;
+}
+
+
+.cancel-property-btn:hover {
+    background: #f8f6f9;
+
+    color: #444;
+}
+
+
+.save-property-btn {
+    border: 0;
+
+    background: #7657e8;
+
+    color: #fff;
+}
+
+
+.save-property-btn:hover {
+    background: #6242d2;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(118, 87, 232, .18);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .property-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-form-field.full {
+        grid-column: auto;
+    }
+
+    .amenities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .current-photos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .property-form-page {
+        padding: 25px 15px 45px;
+    }
+
+    .property-form-card {
+        padding: 22px 18px;
+    }
+
+    .property-form-header h1 {
+        font-size: 27px;
+    }
+
+    .property-map-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .property-location-button {
+        width: 100%;
+    }
+
+    .property-coordinates {
+        grid-template-columns: 1fr;
+    }
+
+    .amenities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-property-btn,
+    .save-property-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+<main class="property-form-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="property-form-header">
+
+        <span class="property-form-kicker">
+            OWNER · EDIT LISTING
+        </span>
+
+        <h1>
+            Edit your property
+        </h1>
+
+        <p>
+            Update your property information, facilities and location.
+            Your changes will be reviewed by the admin again.
+        </p>
+
+    </header>
+
+
+    <!-- =====================================================
+         FORM
+    ====================================================== -->
+
+    <form
+        class="property-form-card"
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+
+        <!-- =================================================
+             SECTION 01
+        ================================================== -->
+
+        <section class="property-form-section">
+
+            <div class="property-section-title">
+
+                <div class="property-section-number">
+                    01
+                </div>
+
+                <div>
+
+                    <h2>
+                        Property information
+                    </h2>
+
+                    <p>
+                        Basic details about your rental
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="property-form-grid">
+
+
+                <!-- PROPERTY NAME -->
+
+                <div class="property-form-field">
+
+                    <label for="name">
+                        Property name *
+                    </label>
+
+                    <input
+                        id="name"
+                        name="name"
+                        value="{{ prop.name }}"
+                        required
+                        placeholder="Green View PG"
+                    >
+
+                </div>
+
+
+                <!-- ROOM -->
+
+                <div class="property-form-field">
+
+                    <label for="room_type">
+                        Room type *
+                    </label>
+
+                    <select
+                        id="room_type"
+                        name="room_type"
+                        required
+                    >
+
+                        <option value="">
+                            Select
+                        </option>
+
+                        {% for x in [
+                            'Single Room',
+                            '2 Sharing',
+                            '3 Sharing',
+                            '4 Sharing',
+                            'PG',
+                            'Hostel',
+                            '1 BHK',
+                            '2 BHK'
+                        ] %}
+
+                        <option
+                            value="{{ x }}"
+                            {% if prop.room_type == x %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ x }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- RENT -->
+
+                <div class="property-form-field">
+
+                    <label for="rent">
+                        Monthly rent (₹) *
+                    </label>
+
+                    <input
+                        id="rent"
+                        type="number"
+                        name="rent"
+                        min="0"
+                        step="1"
+                        value="{{ prop.rent }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DEPOSIT -->
+
+                <div class="property-form-field">
+
+                    <label for="deposit">
+                        Security deposit (₹)
+                    </label>
+
+                    <input
+                        id="deposit"
+                        type="number"
+                        name="deposit"
+                        min="0"
+                        step="1"
+                        value="{{ prop.deposit or 0 }}"
+                    >
+
+                </div>
+
+
+                <!-- FREQUENCY -->
+
+                <div class="property-form-field">
+
+                    <label for="frequency">
+                        Rent frequency *
+                    </label>
+
+                    <select
+                        id="frequency"
+                        name="frequency"
+                        required
+                    >
+
+                        {% for x in [
+                            'Monthly',
+                            'Weekly',
+                            'Daily'
+                        ] %}
+
+                        <option
+                            value="{{ x }}"
+                            {% if prop.frequency == x %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ x }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- AVAILABLE -->
+
+                <div class="property-form-field">
+
+                    <label for="available_from">
+                        Available from *
+                    </label>
+
+                    <input
+                        id="available_from"
+                        type="date"
+                        name="available_from"
+                        value="{% if prop.available_from %}{{ prop.available_from.strftime('%Y-%m-%d') }}{% endif %}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECTION 02
+        ================================================== -->
+
+        <section class="property-form-section">
+
+            <div class="property-section-title">
+
+                <div class="property-section-number">
+                    02
+                </div>
+
+                <div>
+
+                    <h2>
+                        Location
+                    </h2>
+
+                    <p>
+                        Help students find your property easily
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="property-form-grid">
+
+
+                <!-- CITY -->
+
+                <div class="property-form-field">
+
+                    <label for="city">
+                        City *
+                    </label>
+
+                    <input
+                        id="city"
+                        name="city"
+                        value="{{ prop.city }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- LOCALITY -->
+
+                <div class="property-form-field">
+
+                    <label for="locality">
+                        Area / locality *
+                    </label>
+
+                    <input
+                        id="locality"
+                        name="locality"
+                        value="{{ prop.locality }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- LANDMARK -->
+
+                <div class="property-form-field">
+
+                    <label for="landmark">
+                        Nearby college / landmark
+                    </label>
+
+                    <input
+                        id="landmark"
+                        name="landmark"
+                        value="{{ prop.landmark or '' }}"
+                    >
+
+                </div>
+
+
+                <!-- DISTANCE -->
+
+                <div class="property-form-field">
+
+                    <label for="distance_college">
+                        Distance from college (KM)
+                    </label>
+
+                    <input
+                        id="distance_college"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        name="distance_college"
+                        value="{{ prop.distance_college if prop.distance_college is not none else '' }}"
+                    >
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="property-form-field full">
+
+                    <label for="address">
+                        Full property address *
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        required
+                        placeholder="Enter the complete property address..."
+                    >{{ prop.address }}</textarea>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAP -->
+
+            <div class="property-map-box">
+
+                <div class="property-map-header">
+
+                    <div>
+
+                        <div class="property-map-title">
+                            📍 Property map location
+                        </div>
+
+                        <p class="property-map-hint">
+                            Click the map to update the location.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="property-location-button"
+                        onclick="locateEditProperty()"
+                    >
+                        📍 Use my location
+                    </button>
+
+                </div>
+
+
+                <div id="edit-property-map"></div>
+
+
+                <div class="property-coordinates">
+
+                    <input
+                        id="latitude"
+                        name="latitude"
+                        value="{{ prop.latitude if prop.latitude is not none else '' }}"
+                        readonly
+                        placeholder="Latitude"
+                    >
+
+                    <input
+                        id="longitude"
+                        name="longitude"
+                        value="{{ prop.longitude if prop.longitude is not none else '' }}"
+                        readonly
+                        placeholder="Longitude"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECTION 03
+        ================================================== -->
+
+        <section class="property-form-section">
+
+            <div class="property-section-title">
+
+                <div class="property-section-number">
+                    03
+                </div>
+
+                <div>
+
+                    <h2>
+                        Photos & facilities
+                    </h2>
+
+                    <p>
+                        Keep your listing attractive and informative
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT PHOTOS -->
+
+            {% if prop.photos %}
+
+            <label class="property-form-label">
+                Current property photos
+            </label>
+
+            <div class="current-photos">
+
+                {% for photo in prop.photos %}
+
+                <div class="current-photo">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='uploads/' + photo.filename
+                        ) }}"
+                        alt="{{ prop.name }}"
+                    >
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- NEW PHOTOS -->
+
+            <div class="photo-upload-box">
+
+                <label for="photos">
+                    Add more photos
+                </label>
+
+                <input
+                    id="photos"
+                    type="file"
+                    name="photos"
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    multiple
+                >
+
+                <p class="photo-upload-hint">
+                    Existing photos will remain.
+                    New PNG, JPG, JPEG or WEBP photos will be added to your listing.
+                </p>
+
+            </div>
+
+
+            <!-- AMENITIES -->
+
+            <div style="margin-top:20px;">
+
+                <label class="property-form-label">
+                    Amenities
+                </label>
+
+
+                <div class="amenities-grid">
+
+
+                    <!-- AIR CONDITIONING -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Air Conditioning"
+                            {% if 'Air Conditioning' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                ❄️
+                            </span>
+
+                            Air Conditioning
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- WIFI -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Wi-Fi"
+                            {% if 'Wi-Fi' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                📶
+                            </span>
+
+                            Wi-Fi
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- FOOD -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Food"
+                            {% if 'Food' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🍽️
+                            </span>
+
+                            Food
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- PARKING -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Parking"
+                            {% if 'Parking' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🚗
+                            </span>
+
+                            Parking
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- WASHING MACHINE -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Washing Machine"
+                            {% if 'Washing Machine' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🧺
+                            </span>
+
+                            Washing Machine
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- ELECTRICITY -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="24/7 Electricity"
+                            {% if '24/7 Electricity' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                ⚡
+                            </span>
+
+                            24/7 Electricity
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- BATHROOM -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Attached Bathroom"
+                            {% if 'Attached Bathroom' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🚿
+                            </span>
+
+                            Attached Bathroom
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- LIFT -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Lift"
+                            {% if 'Lift' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🛗
+                            </span>
+
+                            Lift
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- SECURITY -->
+
+                    <label class="amenity-option">
+
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="Security"
+                            {% if 'Security' in (prop.amenities or '') %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="amenity-card">
+
+                            <span class="amenity-icon">
+                                🔐
+                            </span>
+
+                            Security
+
+                            <span class="amenity-check">
+                                ✓
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div style="margin-top:20px;">
+
+                <label
+                    class="property-form-label"
+                    for="description"
+                >
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe the property, surroundings, rules and facilities."
+                    style="width:100%;box-sizing:border-box;padding:12px 13px;border:1px solid #ddd8e5;border-radius:9px;outline:none;background:#fff;color:#444;font-family:inherit;font-size:12px;min-height:120px;resize:vertical;line-height:1.6;"
+                >{{ prop.description or '' }}</textarea>
+
+            </div>
+
+
+            <!-- RE-APPROVAL -->
+
+            <div class="reapproval-note">
+
+                <span class="reapproval-icon">
+                    ℹ️
+                </span>
+
+                <span>
+                    After you save changes, this property will be
+                    moved back to <strong>Pending</strong> status so
+                    the admin can review the updated listing before
+                    it becomes visible to students again.
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="property-form-actions">
+
+            <a
+                href="{{ url_for('owner_properties') }}"
+                class="cancel-property-btn"
+            >
+                Cancel
+            </a>
+
+
+            <button
+                type="submit"
+                class="save-property-btn"
+            >
+                ✓ Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</main>
+
+
+<!-- =========================================================
+     LEAFLET
+========================================================= -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const latitudeInput =
+            document.getElementById(
+                "latitude"
+            );
+
+        const longitudeInput =
+            document.getElementById(
+                "longitude"
+            );
+
+        const existingLat =
+            parseFloat(
+                latitudeInput.value
+            );
+
+        const existingLng =
+            parseFloat(
+                longitudeInput.value
+            );
+
+
+        /*
+         * Default map location.
+         * If the property already has coordinates,
+         * use them.
+         * Otherwise use a general India view.
+         */
+
+        let startLat =
+            Number.isFinite(existingLat)
+                ? existingLat
+                : 20.5937;
+
+        let startLng =
+            Number.isFinite(existingLng)
+                ? existingLng
+                : 78.9629;
+
+        let startZoom =
+            Number.isFinite(existingLat)
+            &&
+            Number.isFinite(existingLng)
+                ? 15
+                : 5;
+
+
+        const map =
+            L.map(
+                "edit-property-map"
+            ).setView(
+                [
+                    startLat,
+                    startLng
+                ],
+                startZoom
+            );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+
+        let marker = null;
+
+
+        /*
+         * Existing marker
+         */
+
+        if (
+            Number.isFinite(existingLat)
+            &&
+            Number.isFinite(existingLng)
+        ) {
+
+            marker =
+                L.marker([
+                    existingLat,
+                    existingLng
+                ]).addTo(map);
+
+        }
+
+
+        /*
+         * Map click
+         */
+
+        map.on(
+            "click",
+            function (event) {
+
+                const lat =
+                    event.latlng.lat;
+
+                const lng =
+                    event.latlng.lng;
+
+
+                latitudeInput.value =
+                    lat.toFixed(7);
+
+                longitudeInput.value =
+                    lng.toFixed(7);
+
+
+                if (marker) {
+
+                    marker.setLatLng(
+                        event.latlng
+                    );
+
+                } else {
+
+                    marker =
+                        L.marker(
+                            event.latlng
+                        ).addTo(map);
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Current location helper
+         */
+
+        window.locateEditProperty =
+            function () {
+
+                if (
+                    !navigator.geolocation
+                ) {
+
+                    alert(
+                        "Geolocation is not supported by your browser."
+                    );
+
+                    return;
+                }
+
+
+                navigator.geolocation.getCurrentPosition(
+
+                    function (position) {
+
+                        const lat =
+                            position.coords.latitude;
+
+                        const lng =
+                            position.coords.longitude;
+
+
+                        latitudeInput.value =
+                            lat.toFixed(7);
+
+                        longitudeInput.value =
+                            lng.toFixed(7);
+
+
+                        const point =
+                            [
+                                lat,
+                                lng
+                            ];
+
+
+                        map.setView(
+                            point,
+                            16
+                        );
+
+
+                        if (marker) {
+
+                            marker.setLatLng(
+                                point
+                            );
+
+                        } else {
+
+                            marker =
+                                L.marker(
+                                    point
+                                ).addTo(map);
+
+                        }
+
+                    },
+
+                    function () {
+
+                        alert(
+                            "Could not get your current location."
+                        );
+
+                    }
+
+                );
+
+            };
+
+
+    }
+);
+
+</script>
+
+{% endblock %}

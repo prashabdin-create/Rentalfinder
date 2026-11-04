@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Find Matching Rooms{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .matching-page {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px 40px;
+    }
+
+    .matching-header {
+        background: linear-gradient(135deg, #fff1f4, #fff6e8);
+        padding: 30px;
+        border-radius: 22px;
+        margin-bottom: 25px;
+        border: 1px solid #f1dce5;
+    }
+
+    .matching-header .kicker {
+        color: #c95b8a;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .8px;
+    }
+
+    .matching-header h1 {
+        margin: 8px 0;
+        color: #8a3c5a;
+        font-size: 32px;
+    }
+
+    .matching-header p {
+        margin: 0;
+        color: #777;
+        line-height: 1.6;
+    }
+
+    .matching-card {
+        background: white;
+        padding: 30px;
+        border-radius: 22px;
+        box-shadow: 0 8px 30px rgba(138, 60, 90, .08);
+        border: 1px solid #f1dce5;
+    }
+
+    .section-title {
+        color: #8a3c5a;
+        margin: 10px 0 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1dce5;
+    }
+
+    .matching-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .matching-grid label {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .matching-grid input,
+    .matching-grid select,
+    .matching-grid textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid #e5ccd6;
+        border-radius: 10px;
+        background: #fffafb;
+        font-size: 14px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .matching-grid input:focus,
+    .matching-grid select:focus,
+    .matching-grid textarea:focus {
+        border-color: #c95b8a;
+        box-shadow: 0 0 0 3px rgba(201, 91, 138, .10);
+    }
+
+    .matching-grid textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    /* ADDRESS */
+
+    .address-box {
+        grid-column: 1 / -1;
+        background: #fff7fa;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #f1dce5;
+    }
+
+    .address-title {
+        color: #8a3c5a;
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .address-hint {
+        color: #777;
+        font-size: 13px;
+        margin: 0 0 14px;
+        line-height: 1.5;
+    }
+
+    /* AMENITIES */
+
+    .amenities-box {
+        grid-column: 1 / -1;
+        background: #fff7fa;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #f1dce5;
+    }
+
+    .amenities-title {
+        color: #8a3c5a;
+        margin-bottom: 15px;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .amenities-grid label {
+        display: block;
+        background: white;
+        padding: 11px;
+        border-radius: 9px;
+        border: 1px solid #f0e1e7;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .amenities-grid label:hover {
+        border-color: #c95b8a;
+    }
+
+    .amenities-grid input {
+        width: auto;
+        margin-right: 6px;
+    }
+
+    /* BUTTON */
+
+    .matching-submit {
+        grid-column: 1 / -1;
+        border: none;
+        background: #c95b8a;
+        color: white;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+
+    .matching-submit:hover {
+        background: #8a3c5a;
+    }
+
+    @media (max-width: 750px) {
+
+        .matching-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width,
+        .address-box,
+        .amenities-box,
+        .matching-submit {
+            grid-column: 1;
+        }
+
+        .amenities-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .matching-card {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 500px) {
+
+        .amenities-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .matching-header {
+            padding: 22px;
+        }
+
+        .matching-header h1 {
+            font-size: 26px;
+        }
+    }
+
+</style>
+
+
+<main class="matching-page">
+
+    <!-- HEADER -->
+
+    <section class="matching-header">
+
+        <span class="kicker">
+            SMART MATCHING
+        </span>
+
+        <h1>
+            ✨ Tell us what you need.
+        </h1>
+
+        <p>
+            Tell us where you want to stay and what you are looking for.
+            We'll find properties that match your preferences.
+        </p>
+
+    </section>
+
+
+    <!-- FORM -->
+
+    <section class="matching-card">
+
+        <form method="post" class="matching-grid">
+
+
+            <!-- RENTAL PREFERENCES -->
+
+            <div class="full-width">
+                <h2 class="section-title">
+                    🏠 Rental Preferences
+                </h2>
+            </div>
+
+
+            <label>
+                Maximum monthly budget (₹)
+
+                <input
+                    type="number"
+                    name="budget"
+                    min="0"
+                    placeholder="7000"
+                    required
+                >
+            </label>
+
+
+            <label>
+                Room type
+
+                <select name="room_type">
+
+                    <option value="">
+                        Any room type
+                    </option>
+
+                    <option>Single Room</option>
+                    <option>2 Sharing</option>
+                    <option>3 Sharing</option>
+                    <option>4 Sharing</option>
+                    <option>PG</option>
+                    <option>Hostel</option>
+                    <option>1 BHK</option>
+                    <option>2 BHK</option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+                City
+
+                <input
+                    name="city"
+                    placeholder="Amravati"
+                    required
+                >
+            </label>
+
+
+            <label>
+                Area / Locality
+
+                <input
+                    name="locality"
+                    placeholder="Kathora Road"
+                >
+            </label>
+
+
+            <!-- DETAILED ADDRESS -->
+
+            <div class="address-box">
+
+                <div class="address-title">
+                    📍 Where do you want to stay?
+                </div>
+
+                <p class="address-hint">
+                    Enter the detailed area or address where you would
+                    prefer to rent a room. For example: near your college,
+                    a specific road, landmark, neighborhood or locality.
+                </p>
+
+                <textarea
+                    name="preferred_address"
+                    placeholder="Example: Near Government College, Kathora Road, close to the main bus stop..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- AMENITIES -->
+
+            <div class="amenities-box">
+
+                <div class="amenities-title">
+                    ✨ Amenities Wanted
+                </div>
+
+                <div class="amenities-grid">
+
+                    {% for a in [
+                        'Air Conditioning',
+                        'Wi-Fi',
+                        'Food',
+                        'Parking',
+                        'Washing Machine',
+                        '24/7 Electricity',
+                        'Attached Bathroom',
+                        'Lift',
+                        'Security'
+                    ] %}
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="amenities"
+                            value="{{ a }}"
+                        >
+
+                        {{ a }}
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="matching-submit"
+            >
+                🔍 View Matching Properties
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}

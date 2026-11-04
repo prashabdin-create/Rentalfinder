@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Search Properties | Rental Finder{% endblock %}
+{% block content %}
+<main class="page">
+    <div class="page-title">
+        <span class="section-kicker">PROPERTY SEARCH</span>
+        <h1>Find your next room.</h1>
+        <p>Search approved rentals by property name, area, city, room type or amenities.</p>
+    </div>
+
+    <form class="property-search" action="{{ url_for('properties') }}" method="get">
+        <div class="search-input-wrap">
+            <span>🔎</span>
+            <input type="search" name="q" value="{{ search }}" placeholder="Search by room, area, city, PG, Wi-Fi, parking..." autocomplete="off">
+        </div>
+        <button class="btn primary" type="submit">Search</button>
+        {% if search %}<a class="btn ghost" href="{{ url_for('properties') }}">Clear</a>{% endif %}
+    </form>
+
+    <div class="page-title row results-heading">
+        <div>
+            <span class="section-kicker">RESULTS</span>
+            <p><strong>{{ scored|length }}</strong> approved listing{{ '' if scored|length == 1 else 's' }} found{% if search %} for “{{ search }}”{% endif %}.</p>
+        </div>
+        <a class="btn ghost" href="{{ url_for('preferences') }}">🎯 Smart Match</a>
+    </div>
+
+    <div class="results-grid">
+        {% for p,score in scored %}
+        <a class="result-card" href="{{ url_for('property_detail', property_id=p.id) }}">
+            {% if p.photos %}<img src="{{ url_for('static', filename='uploads/'+p.photos[0].filename) }}">{% else %}<div class="photo-placeholder">🏠</div>{% endif %}
+            <div class="result-body">
+                <div class="result-top">
+                    <div><h2>{{ p.name }}</h2><p>📍 {{ p.locality }}, {{ p.city }}</p></div>
+                    {% if score %}<div class="match"><span>Match</span><strong>{{ score }}%</strong></div>{% endif %}
+                </div>
+                <div class="chips">
+                    <span>₹{{ '%.0f'|format(p.rent) }}/{{ p.frequency|lower }}</span>
+                    <span>{{ p.room_type }}</span>
+                    {% if p.distance_college %}<span>{{ p.distance_college }} km to college</span>{% endif %}
+                </div>
+                <p class="desc">{{ (p.description or 'Well-maintained student accommodation.')[:145] }}{% if (p.description or '')|length > 145 %}…{% endif %}</p>
+                <span class="view-link">View property →</span>
+            </div>
+        </a>
+        {% else %}
+        <div class="empty panel">
+            <div style="font-size:34px;margin-bottom:8px">🔎</div>
+            <strong>No properties found</strong>
+            <p>Try another city, area, room type or amenity.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

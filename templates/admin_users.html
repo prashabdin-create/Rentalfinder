@@ -1,0 +1,717 @@
+{% extends "base.html" %}
+
+{% block title %}
+Manage Users | Rental Finder
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   ADMIN USERS PAGE
+========================================================= */
+
+.admin-users-page {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 38px 24px 70px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.admin-users-header {
+    margin-bottom: 27px;
+}
+
+.admin-users-kicker {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #7657e8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+}
+
+.admin-users-header h1 {
+    margin: 0;
+
+    color: #30243a;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+.admin-users-header p {
+    margin: 8px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   USER GROUPS
+========================================================= */
+
+.users-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   GROUP CARD
+========================================================= */
+
+.user-group {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e0ea;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 28px rgba(45, 30, 60, .05);
+}
+
+
+/* =========================================================
+   GROUP HEADER
+========================================================= */
+
+.user-group-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 19px 20px;
+
+    background: #faf9fc;
+
+    border-bottom: 1px solid #ece7f0;
+}
+
+.user-group-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.user-group-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 36px;
+
+    height: 36px;
+
+    border-radius: 9px;
+
+    background: #f0ebff;
+
+    font-size: 17px;
+}
+
+.user-group-title h2 {
+    margin: 0;
+
+    color: #3b2d45;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+.user-count {
+    min-width: 27px;
+
+    height: 27px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 8px;
+
+    box-sizing: border-box;
+
+    border-radius: 999px;
+
+    background: #eee9f8;
+
+    color: #7657e8;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   USER ROW
+========================================================= */
+
+.user-list {
+    padding: 5px 0;
+}
+
+.user-row {
+    display: grid;
+
+    grid-template-columns: auto 1fr auto;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #f0edf3;
+}
+
+.user-row:last-child {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.user-avatar {
+    width: 43px;
+
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eee7ff,
+            #f7eafa
+        );
+
+    color: #7657e8;
+
+    font-size: 15px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   USER INFORMATION
+========================================================= */
+
+.user-info {
+    min-width: 0;
+}
+
+.user-name {
+    margin: 0 0 4px;
+
+    color: #35283f;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+.user-email {
+    margin: 0 0 3px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    word-break: break-word;
+}
+
+.user-phone {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.user-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+/* View */
+
+.view-user-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 0 11px;
+
+    border: 1px solid #ddd4f5;
+
+    border-radius: 8px;
+
+    background: #f7f3ff;
+
+    color: #7657e8;
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 750;
+
+    white-space: nowrap;
+
+    transition: .2s ease;
+}
+
+.view-user-btn:hover {
+    background: #7657e8;
+
+    border-color: #7657e8;
+
+    color: #ffffff;
+}
+
+
+/* Delete */
+
+.delete-user-btn {
+    min-height: 34px;
+
+    padding: 0 11px;
+
+    border: 1px solid #efcfd4;
+
+    border-radius: 8px;
+
+    background: #fff7f8;
+
+    color: #b34b58;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: .2s ease;
+}
+
+.delete-user-btn:hover {
+    background: #b34b58;
+
+    border-color: #b34b58;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.user-empty {
+    padding: 38px 20px;
+
+    text-align: center;
+}
+
+.user-empty-icon {
+    margin-bottom: 8px;
+
+    font-size: 30px;
+}
+
+.user-empty p {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .users-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-users-page {
+        padding: 25px 15px 45px;
+    }
+
+    .admin-users-header h1 {
+        font-size: 28px;
+    }
+
+    .user-row {
+        grid-template-columns: auto 1fr;
+    }
+
+    .user-actions {
+        grid-column: 1 / -1;
+
+        padding-left: 56px;
+    }
+
+    .view-user-btn,
+    .delete-user-btn {
+        flex: 1;
+    }
+
+}
+
+</style>
+
+
+<main class="admin-users-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="admin-users-header">
+
+        <span class="admin-users-kicker">
+            ADMINISTRATION
+        </span>
+
+        <h1>
+            Manage Users
+        </h1>
+
+        <p>
+            View account information, student requirements,
+            owner properties and manage platform users.
+        </p>
+
+    </header>
+
+
+    <!-- =====================================================
+         USERS
+    ====================================================== -->
+
+    <div class="users-grid">
+
+
+        <!-- =================================================
+             STUDENTS
+        ================================================== -->
+
+        <section class="user-group">
+
+            <header class="user-group-header">
+
+                <div class="user-group-title">
+
+                    <div class="user-group-icon">
+                        🎓
+                    </div>
+
+                    <h2>
+                        Students
+                    </h2>
+
+                </div>
+
+                <span class="user-count">
+                    {{ students|length }}
+                </span>
+
+            </header>
+
+
+            <div class="user-list">
+
+                {% for user in students %}
+
+                <div class="user-row">
+
+
+                    <div class="user-avatar">
+
+                        {{ user.name[:1]|upper }}
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <p class="user-name">
+                            {{ user.name }}
+                        </p>
+
+                        <p class="user-email">
+                            {{ user.email }}
+                        </p>
+
+                        {% if user.phone %}
+
+                        <p class="user-phone">
+                            📞 {{ user.phone }}
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="user-actions">
+
+
+                        <!-- VIEW -->
+
+                        <a
+                            href="{{ url_for(
+                                'admin_user_detail',
+                                user_id=user.id
+                            ) }}"
+                            class="view-user-btn"
+                        >
+                            👁 View Details
+                        </a>
+
+
+                        <!-- DELETE -->
+
+                        <form
+                            method="post"
+                            action="{{ url_for(
+                                'admin_delete_user',
+                                user_id=user.id
+                            ) }}"
+                            style="margin:0;"
+                            onsubmit="return confirm('Delete this student permanently? Their requests and account will be removed.');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="delete-user-btn"
+                            >
+                                🗑 Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="user-empty">
+
+                    <div class="user-empty-icon">
+                        🎓
+                    </div>
+
+                    <p>
+                        No students registered yet.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             OWNERS
+        ================================================== -->
+
+        <section class="user-group">
+
+            <header class="user-group-header">
+
+                <div class="user-group-title">
+
+                    <div class="user-group-icon">
+                        🏠
+                    </div>
+
+                    <h2>
+                        Owners
+                    </h2>
+
+                </div>
+
+                <span class="user-count">
+                    {{ owners|length }}
+                </span>
+
+            </header>
+
+
+            <div class="user-list">
+
+                {% for user in owners %}
+
+                <div class="user-row">
+
+
+                    <div class="user-avatar">
+
+                        {{ user.name[:1]|upper }}
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <p class="user-name">
+                            {{ user.name }}
+                        </p>
+
+                        <p class="user-email">
+                            {{ user.email }}
+                        </p>
+
+                        {% if user.phone %}
+
+                        <p class="user-phone">
+                            📞 {{ user.phone }}
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="user-actions">
+
+
+                        <!-- VIEW -->
+
+                        <a
+                            href="{{ url_for(
+                                'admin_user_detail',
+                                user_id=user.id
+                            ) }}"
+                            class="view-user-btn"
+                        >
+                            👁 View Details
+                        </a>
+
+
+                        <!-- DELETE -->
+
+                        <form
+                            method="post"
+                            action="{{ url_for(
+                                'admin_delete_user',
+                                user_id=user.id
+                            ) }}"
+                            style="margin:0;"
+                            onsubmit="return confirm('Delete this owner permanently? Their properties, photos and related requests will also be removed.');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="delete-user-btn"
+                            >
+                                🗑 Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="user-empty">
+
+                    <div class="user-empty-icon">
+                        🏠
+                    </div>
+
+                    <p>
+                        No owners registered yet.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}
